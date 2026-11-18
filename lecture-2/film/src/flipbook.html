@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Flip-book film</title>
+<!-- Slide 1's flip-book, drawn frame by frame for film/flipbook.mp4 (render_flipbook.js calls draw(t)).
+     Same 29 pages and timing as the CSS fallback in src/slides.js (s-open). -->
+<style>
+  html, body { margin: 0; width: 1920px; height: 1080px; background: #000; overflow: hidden; }
+  #book { position: absolute; left: 440px; top: 120px; width: 1040px; height: 780px; perspective: 4200px; }
+  #shadow { position: absolute; inset: 0; border-radius: 6px; box-shadow: 0 30px 80px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.04); background: #fbfbf8; }
+  .page { position: absolute; inset: 0; background: #fbfbf8; border-radius: 6px; transform-origin: 0 50%; backface-visibility: hidden;
+    display: flex; flex-direction: column; overflow: hidden; color: #1d1d1f; font-family: "Latin Modern Roman", "CMU Serif", Georgia, serif; }
+  .pb-bar { background: #1f3b6e; color: #fff; padding: 22px 40px; font-size: 40px; }
+  .pb-body { flex: 1; padding: 38px 52px; display: flex; flex-direction: column; gap: 22px; font-size: 30px; line-height: 1.35; }
+  .pb-line { height: 14px; border-radius: 7px; background: #c9c9c4; }
+  .pb-f { align-self: center; font-style: italic; font-size: 38px; margin-top: 8px; }
+  .pb-foot { display: flex; justify-content: space-between; background: #1f3b6e; color: #cfd8ea; padding: 10px 40px; font: 400 20px Consolas, monospace; }
+  .shade { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, rgba(0,0,0,.0) 0%, rgba(0,0,0,.55) 100%); opacity: 0; }
+  .cast { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, rgba(0,0,0,.35) 0%, rgba(0,0,0,0) 45%); opacity: 0; }
+</style></head>
+<body>
+<div id="book"><div id="shadow"></div></div>
+<script>
+const PAGES = [
+  ['Bagging and Random Forests', 'title'], ['Outline', 'outline'], ['Bootstrapping'], ['Bootstrapping', 'Var(αX + (1 − α)Y)'], ['Bootstrapping', 'α = (σ<sup>2</sup><sub>Y</sub> − σ<sub>XY</sub>) / (σ<sup>2</sup><sub>X</sub> + σ<sup>2</sup><sub>Y</sub> − 2σ<sub>XY</sub>)'],
+    ['Bootstrapping'], ['Bootstrapping'], ['Bootstrapping', '(1/1000) Σ α<sub>r</sub> = 0.5996'], ['Bootstrapping'], ['Bootstrapping'],
+    ['Bootstrapping', 'SE<sub>B</sub> = √( Σ (α<sub>r</sub> − mean)<sup>2</sup> / (B − 1) )'], ['Bootstrapping'], ['Bootstrapping'], ['Bootstrapping'], ['Bagging'],
+    ['Bagging', 'Var(average) = σ<sup>2</sup> / n'], ['Bagging', 'f<sub>bag</sub>(x) = (1/B) Σ f<sub>b</sub>(x)'], ['Bagging'], ['Bootstrapping'], ['Out-of-Bag Error Estimation'],
+    ['Back to R!', 'bagging()'], ['Random Forests'], ['Random Forests'], ['Random Forests'], ['On the value of m', 'm = √p'],
+    ['Random Forests'], ['Back to R!', 'randomForest(formula, data, ntree, mtry)'], ['Pros and Cons'], ['References']
+];
+const COURSE = 'The Analytics Edge';
+// seeded like d3.randomLcg(7), so the line lengths match the deck's fallback
+function lcg(seed) { const mul = 0x19660D, inc = 0x3C6EF35F, eps = 1 / 0x100000000; let s = (0 <= seed && seed < 1 ? seed / eps : Math.abs(seed)) | 0; return () => (s = mul * s + inc | 0, eps * (s >>> 0)); }
+const rng = lcg(7);
+const book = document.getElementById('book');
+const pages = PAGES.map(([title, extra], i) => {
+  const p = document.createElement('div'); p.className = 'page'; p.style.zIndex = String(PAGES.length - i);
+  let body = '';
+  if (extra === 'title') body = '<div style="margin:auto;text-align:center"><div style="font-size:52px;color:#1f3b6e">Bagging and Random Forests</div><div style="font-size:30px;margin-top:22px;color:#555">' + COURSE + ' · 2019</div></div>';
+  else if (extra === 'outline') body = '<div style="font-size:34px;line-height:2;margin-top:20px">▸ Bootstrapping<br>▸ Bagging<br>▸ Random Forests</div>';
+  else {
+    const n = 3 + Math.floor(rng() * 4);
+    for (let k = 0; k < n; k++) body += '<div class="pb-line" style="width:' + (55 + rng() * 40).toFixed(0) + '%"></div>';
+    if (extra) body += '<div class="pb-f">' + extra + '</div>';
+  }
+  p.innerHTML = (extra === 'title' ? '' : '<div class="pb-bar">' + title + '</div>') + '<div class="pb-body">' + body + '</div>' +
+    '<div class="pb-foot"><span>' + COURSE + '</span><span>' + (i + 1) + ' / 29</span></div><div class="shade"></div><div class="cast"></div>';
+  book.appendChild(p);
+  return p;
+});
+// timing: book fades in, then each page turns; the gaps shrink as the book speeds up
+const FADE = 0.35, FIRST = 0.6, TURN = 0.55;
+const START = []; { let at = FIRST; for (let i = 0; i < PAGES.length - 1; i++) { START.push(at); at += Math.max(0.075, 0.42 * Math.pow(0.84, i)); } }
+window.SCHEDULE = START;
+window.DUR = START[START.length - 1] + TURN + 0.5;
+const ease = k => 0.5 - 0.5 * Math.cos(Math.PI * k);
+window.draw = t => {
+  book.style.opacity = Math.min(1, t / FADE);
+  pages.forEach((p, i) => {
+    const sh = p.querySelector('.shade'), cast = p.querySelector('.cast');
+    if (i === pages.length - 1) { p.style.transform = 'none'; return; }
+    const k = Math.max(0, Math.min(1, (t - START[i]) / TURN));
+    p.style.visibility = k >= 1 ? 'hidden' : 'visible';
+    p.style.transform = 'rotateY(' + (-176 * ease(k)).toFixed(2) + 'deg)';
+    sh.style.opacity = (0.7 * Math.sin(Math.PI * Math.min(k * 1.8, 1) / 2)).toFixed(3);
+    // the page underneath darkens a little while this one passes over it
+    const under = pages[i + 1];
+    if (under) under.querySelector('.cast').style.opacity = k > 0 && k < 1 ? (0.55 * Math.sin(Math.PI * k)).toFixed(3) : '0';
+  });
+};
+window.draw(0);
+</script>
+</body></html>

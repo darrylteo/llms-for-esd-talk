@@ -1,0 +1,58 @@
+{
+ "summary": "deck eval 10/10 checks pass · 92 numbers traced to source · 31 slides rendered headless · spoken 30.9 min",
+ "passed": 10,
+ "total": 10,
+ "results": {
+  "T1 section timing ±10%": {
+   "pass": true,
+   "details": [
+    "A: 61s spoken / 60s planned (data-t sum 60s)",
+    "B: 1403s spoken / 1320s planned (data-t sum 1390s)",
+    "C: 392s spoken / 420s planned (data-t sum 415s)",
+    "total 30.9 min"
+   ]
+  },
+  "T2 slide timing ±30%": {
+   "pass": true,
+   "details": []
+  },
+  "A1 headline claim, ≤2 lines": {
+   "pass": true,
+   "details": []
+  },
+  "A2 body ≤40 words": {
+   "pass": true,
+   "details": []
+  },
+  "N1 numbers registered": {
+   "pass": true,
+   "details": []
+  },
+  "N2 claims verify against source": {
+   "pass": true,
+   "details": [
+    "92 claims checked"
+   ]
+  },
+  "Q1 quotes match transcripts": {
+   "pass": true,
+   "details": []
+  },
+  "R1 render clean": {
+   "pass": true,
+   "details": [
+    "31/31 slides rendered"
+   ]
+  },
+  "C1 contrast ≥4.5:1": {
+   "pass": true,
+   "details": [
+    "min 4.51:1 for text greys"
+   ]
+  },
+  "W1 writing style": {
+   "pass": true,
+   "details": []
+  }
+ }
+}

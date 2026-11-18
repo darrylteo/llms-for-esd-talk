@@ -1,0 +1,260 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Opening film scene</title>
+<style>html, body { margin: 0; background: #000; } canvas { display: block; }</style>
+</head>
+<body>
+<canvas id="c" width="1920" height="1080"></canvas>
+<script>
+/* Opening film for slide 1, drawn as a pure function of time: draw(t) paints frame t (seconds).
+   render.js steps t at a fixed frame rate in headless Chrome and saves each frame.
+   Timeline is on a 120 bpm grid (one beat = 0.5 s) so cuts land on the music from music.py:
+     0.75  words appear, one per eighth note        4.0  words split into token chips
+     6.0   context window enters, layers fill        8.4  chips stream into the window
+     10.0  token counter runs                        16.0 "98% read from cache"
+     20.0  hard cut to black                         20.5 last line, held to 25.0 */
+const W = 1920, H = 1080, DUR = 25;
+const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+const COL = { bg: '#000000', ink: '#f5f5f7', mute: '#8e8e93', line: '#3a3a40', surf2: '#1c1c1f',
+  sys: '#2997ff', proj: '#bf5af2', sess: '#40c8e0', conv: '#a1a1a6', neu: '#ff9f0a', ok: '#30d158' };
+let STATS = { processed: 2362467990, hit: 0.9801 };
+
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const prog = (t, t0, d) => clamp((t - t0) / d);
+const lerp = (a, b, p) => a + (b - a) * p;
+const outCubic = p => 1 - Math.pow(1 - p, 3);
+const outQuart = p => 1 - Math.pow(1 - p, 4);
+const inOutCubic = p => p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+const outBack = p => { const c1 = 1.4, c3 = c1 + 1; return 1 + c3 * Math.pow(p - 1, 3) + c1 * Math.pow(p - 1, 2); };
+function hex(c) { const n = parseInt(c.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }
+function mix(a, b, p) { const A = hex(a), B = hex(b); return 'rgb(' + A.map((v, i) => Math.round(lerp(v, B[i], p))).join(',') + ')'; }
+function font(w, px, fam) { return w + ' ' + px + 'px ' + (fam === 'mono' ? '"JetBrains Mono"' : 'Inter'); }
+function rr(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect(x, y, w, h, Math.min(r, w / 2, h / 2)); }
+
+/* ---------- layout, computed once fonts are loaded ---------- */
+const WORDS = ['Schedule', '40', 'flights', 'across', '12', 'gates', 'with', 'no', 'conflicts.'];
+const TOKS = [[0, 0, 5], [0, 5, 8], [1], [2], [3], [4], [5], [6], [7], [8, 0, 9], [8, 9, 10]];
+const WORD_Y = 500, WORD_F = font(600, 64), CHIP_F = font(500, 32, 'mono'), CHIP_H = 70;
+const PANEL = { x: 1250, y: 150, w: 460, h: 790 };
+const LAYERS = [['sys', 250, 'system prompt + tools'], ['proj', 100, 'CLAUDE.md + memory'], ['sess', 70, 'session state'],
+  ['conv', 230, 'conversation'], ['neu', 70, 'your message']];
+const L = {};
+function layout() {
+  ctx.font = WORD_F; ctx.letterSpacing = '0px';
+  const ww = WORDS.map(w => ctx.measureText(w).width), gap = 22;
+  let x = (W - ww.reduce((a, b) => a + b) - gap * (WORDS.length - 1)) / 2;
+  L.wordX = ww.map(w => { const x0 = x; x += w + gap; return x0; });
+  L.tok = TOKS.map(([wi, a, b]) => {
+    const word = WORDS[wi], s = a === undefined ? word : word.slice(a, b);
+    ctx.font = WORD_F;
+    const sx = L.wordX[wi] + (a ? ctx.measureText(word.slice(0, a)).width : 0);
+    return { s, sx, ws: !a, sw: (ctx.font = WORD_F, ctx.measureText(s).width), mw: (ctx.font = CHIP_F, ctx.measureText(s).width) };
+  });
+  const cg = 12, cw = L.tok.map(k => k.mw + 30);
+  let cx = (W - cw.reduce((a, b) => a + b) - cg * (cw.length - 1)) / 2;
+  L.tok.forEach((k, i) => { k.cx = cx; k.cw = cw[i]; cx += cw[i] + cg; });
+  let y = PANEL.y + 20;
+  L.bands = LAYERS.map(([k, h, label]) => { const b = { k, h, label, y }; y += h + 10; return b; });
+  L.endW = ww.reduce((a, b) => a + b) + gap * (WORDS.length - 1);
+}
+
+/* chip row transform: centred full size, then shrunk and moved left when the window enters */
+function rowXf(t) {
+  const p = inOutCubic(prog(t, 5.5, 0.6));
+  return { s: lerp(1, 0.78, p), dx: lerp(0, 600 - 960, p) };
+}
+function chipPos(k, t) { // top-left of chip in screen space before streaming
+  const f = rowXf(t);
+  return { x: 960 + (k.cx - 960) * f.s + f.dx, y: WORD_Y - 10 - CHIP_H / 2 * f.s, s: f.s };
+}
+
+/* ---------- scenes ---------- */
+function sceneWords(t) {
+  if (t >= 4.0) return;
+  ctx.font = WORD_F; ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left';
+  WORDS.forEach((w, i) => {
+    const p = outCubic(prog(t, 0.75 + i * 0.25, 0.3));
+    if (!p) return;
+    ctx.globalAlpha = p; ctx.fillStyle = COL.ink;
+    ctx.fillText(w, L.wordX[i], WORD_Y + (1 - p) * 16);
+  });
+  ctx.globalAlpha = 1;
+  // caret: blinks on the beat, rides the end of the sentence, gone once tokenising starts
+  if (t < 3.4) {
+    const shown = clamp(Math.floor((t - 0.75) / 0.25) + 1, 0, WORDS.length);
+    let x = shown ? L.wordX[shown - 1] + (ctx.measureText(WORDS[shown - 1]).width) + 8 : L.wordX[0] - 4;
+    const on = t < 0.75 ? Math.floor(t / 0.25) % 2 === 0 : (shown === WORDS.length ? Math.floor(t / 0.25) % 2 === 1 : true);
+    if (on) { ctx.fillStyle = COL.neu; ctx.fillRect(x, WORD_Y - 52, 5, 64); }
+  }
+  // token boundaries flash in before the split
+  const bp = prog(t, 3.4, 0.3);
+  if (bp > 0) {
+    ctx.fillStyle = COL.neu;
+    L.tok.forEach((k, i) => {
+      if (!i) return;
+      const h = 84 * outCubic(prog(t, 3.4 + i * 0.025, 0.25));
+      ctx.globalAlpha = 0.9; ctx.fillRect(k.sx - (k.ws ? 12.5 : 1.5), WORD_Y - 58 + (84 - h) / 2, 3, h);
+    });
+    ctx.globalAlpha = 1;
+  }
+}
+
+function drawChip(k, x, y, s, alpha, morph) {
+  // morph 0: the word glyphs at sentence position; 1: a token chip
+  const m = clamp(morph);
+  const px = lerp(64, 32 * s, m);
+  ctx.globalAlpha = alpha * m;
+  ctx.fillStyle = COL.surf2; ctx.strokeStyle = COL.neu; ctx.lineWidth = 2 * s;
+  const w = lerp(k.sw, k.cw * s, m), h = lerp(64, CHIP_H * s, m);
+  rr(x, y, w, h, 12 * s); ctx.fill(); ctx.stroke();
+  ctx.textBaseline = 'middle'; ctx.textAlign = 'center';
+  // glyphs hand over to the mono label quickly so the two fonts are never both legible
+  const ga = 1 - clamp(m * 2.5), ma = clamp(m * 2.5 - 0.9);
+  if (ga > 0) { ctx.globalAlpha = alpha * ga; ctx.fillStyle = COL.ink; ctx.font = '600 ' + px + 'px Inter'; ctx.fillText(k.s, x + w / 2, y + h / 2 + 2); }
+  ctx.globalAlpha = alpha * ma; ctx.fillStyle = COL.ink; ctx.font = '500 ' + px + 'px "JetBrains Mono"'; ctx.fillText(k.s, x + w / 2, y + h / 2 + 2);
+  ctx.globalAlpha = 1; ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left';
+}
+
+function streamP(i, t) { return prog(t, 8.4 + i * 0.1, 0.55); }
+function sceneChips(t) {
+  if (t < 4.0 || t >= 10.2) return;
+  L.tok.forEach((k, i) => {
+    const m = outCubic(prog(t, 4.0 + i * 0.035, 0.45));
+    const cp = chipPos(k, t);
+    const x0 = k.sx, y0 = WORD_Y - 50;
+    let x = lerp(x0, cp.x, m), y = lerp(y0, cp.y, m), s = cp.s, a = 1;
+    const sp = streamP(i, t);
+    if (sp > 0) { // fly in an arc into the "your message" band
+      const b = L.bands[4], e = inOutCubic(sp);
+      const tx = PANEL.x + 20 + 420 * (i + 0.5) / L.tok.length - 10, ty = b.y + b.h / 2 - 10;
+      const cx = (cp.x + tx) / 2, cy = Math.min(cp.y, ty) - 260;
+      x = (1 - e) * (1 - e) * cp.x + 2 * (1 - e) * e * cx + e * e * tx;
+      y = (1 - e) * (1 - e) * cp.y + 2 * (1 - e) * e * cy + e * e * ty;
+      s = lerp(cp.s, 0.3, e); a = 1 - clamp((sp - 0.75) / 0.25);
+    }
+    if (a > 0) drawChip(k, x, y, s, a, m);
+  });
+}
+
+function bandColor(b, t) {
+  if (b.k === 'neu') return COL.neu;
+  const idx = ['sys', 'proj', 'sess', 'conv'].indexOf(b.k);
+  return mix(COL[b.k], COL.ok, inOutCubic(prog(t, 12.0 + idx * 0.5, 0.4)));
+}
+function scenePanel(t) {
+  if (t < 6.0 || t >= 20) return;
+  const pe = outCubic(prog(t, 6.0, 0.6));
+  ctx.save(); ctx.translate((1 - pe) * 90, 0); ctx.globalAlpha = pe;
+  ctx.strokeStyle = COL.line; ctx.lineWidth = 3;
+  rr(PANEL.x, PANEL.y, PANEL.w, PANEL.h, 22); ctx.stroke();
+  ctx.fillStyle = COL.mute; ctx.font = font(500, 28); ctx.textAlign = 'center';
+  ctx.fillText('context window', PANEL.x + PANEL.w / 2, PANEL.y - 26); ctx.textAlign = 'left';
+  ctx.restore();
+  const starts = [6.5, 7.0, 7.5, 8.0];
+  L.bands.forEach((b, i) => {
+    let h = b.h, w = 420;
+    if (i < 4) h = b.h * outCubic(prog(t, starts[i], 0.45));
+    else { // grows as the chips land
+      let landed = 0; L.tok.forEach((k, j) => { landed += outCubic(clamp((streamP(j, t) - 0.7) / 0.3)); });
+      w = 420 * landed / L.tok.length;
+    }
+    if (h < 0.5 || w < 0.5) return;
+    ctx.globalAlpha = 0.92; ctx.fillStyle = bandColor(b, t);
+    rr(PANEL.x + 20, b.y, w, h, 8); ctx.fill();
+    const la = i < 4 ? prog(t, starts[i] + 0.25, 0.3) : prog(t, 9.7, 0.3);
+    if (la > 0 && h > 40) {
+      ctx.globalAlpha = la * 0.88; ctx.fillStyle = '#000'; ctx.font = font(600, 24);
+      ctx.fillText(b.label, PANEL.x + 38, b.y + 40);
+    }
+  });
+  ctx.globalAlpha = 1;
+  // every beat the whole stack is read again: a light sweep from top to bottom
+  if (t >= 10.0) {
+    const beat = (t - 10.0) % 0.5, sp = beat / 0.38;
+    if (sp < 1) {
+      const top = L.bands[0].y, bot = L.bands[4].y + L.bands[4].h, y = lerp(top, bot, outCubic(sp));
+      const g = ctx.createLinearGradient(0, y - 60, 0, y + 4);
+      g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(1, 'rgba(255,255,255,' + (0.38 * (1 - sp)) + ')');
+      ctx.fillStyle = g; ctx.fillRect(PANEL.x + 20, Math.max(top, y - 60), 420, Math.min(64, y + 4 - top));
+    }
+  }
+  // legend under the window
+  const lg = outCubic(prog(t, 13.5, 0.4));
+  if (lg > 0) {
+    ctx.globalAlpha = lg; ctx.font = font(500, 24); ctx.textBaseline = 'middle';
+    const ly = PANEL.y + PANEL.h + 42;
+    ctx.fillStyle = COL.ok; rr(PANEL.x + 20, ly - 10, 20, 20, 4); ctx.fill();
+    ctx.fillStyle = COL.mute; ctx.fillText('read from cache', PANEL.x + 52, ly + 1);
+    ctx.fillStyle = COL.neu; rr(PANEL.x + 270, ly - 10, 20, 20, 4); ctx.fill();
+    ctx.fillStyle = COL.mute; ctx.fillText('new', PANEL.x + 302, ly + 1);
+    ctx.textBaseline = 'alphabetic'; ctx.globalAlpha = 1;
+  }
+}
+
+const fmt = n => Math.round(n).toLocaleString('en-US');
+function drawTabular(str, cx, y) {
+  // Inter's figures are proportional on canvas; lay digits out on a fixed grid so the counter does not jitter
+  const dw = Math.max(...'0123456789'.split('').map(d => ctx.measureText(d).width)), cw = ctx.measureText(',').width;
+  const total = [...str].reduce((a, ch) => a + (ch === ',' ? cw : dw), 0);
+  let x = cx - total / 2;
+  ctx.textAlign = 'center';
+  for (const ch of str) { const w = ch === ',' ? cw : dw; ctx.fillText(ch, x + w / 2, y); x += w; }
+  ctx.textAlign = 'left';
+}
+function sceneCounter(t) {
+  if (t < 10.0 || t >= 20) return;
+  const a = outCubic(prog(t, 10.0, 0.3));
+  const v = STATS.processed * outQuart(prog(t, 10.0, 5.6));
+  ctx.globalAlpha = a; ctx.fillStyle = COL.ink; ctx.font = font(800, 120); ctx.letterSpacing = '-2px';
+  drawTabular(fmt(v), 600, 520);
+  ctx.letterSpacing = '0px';
+  ctx.font = font(500, 34); ctx.fillStyle = COL.mute; ctx.textAlign = 'center';
+  ctx.globalAlpha = outCubic(prog(t, 10.4, 0.5));
+  ctx.fillText('tokens through Claude, my last nine weeks', 600, 600);
+  const hp = prog(t, 16.0, 0.35);
+  if (hp > 0) {
+    ctx.save(); ctx.translate(600, 690); const sc = lerp(1.12, 1, outCubic(hp)); ctx.scale(sc, sc);
+    ctx.globalAlpha = outCubic(hp); ctx.fillStyle = COL.ok; ctx.font = font(700, 54);
+    ctx.fillText(Math.round(STATS.hit * 100) + '% read from cache', 0, 18);
+    ctx.restore();
+  }
+  ctx.textAlign = 'left'; ctx.globalAlpha = 1;
+}
+
+function sceneFinale(t) {
+  if (t < 20.5) return;
+  ctx.globalAlpha = inOutCubic(prog(t, 20.5, 0.9));
+  ctx.fillStyle = COL.ink; ctx.font = font(700, 76); ctx.letterSpacing = '-1.52px'; ctx.textAlign = 'center';
+  ctx.fillText('A year ago, I said LLM output was trash.', 960, 560);
+  ctx.letterSpacing = '0px'; ctx.textAlign = 'left'; ctx.globalAlpha = 1;
+}
+
+function draw(t) {
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.fillStyle = COL.bg; ctx.fillRect(0, 0, W, H);
+  if (t < 20) { // slow push-in until the cut; the final card is static so it matches the deck's last frame
+    const k = 1 + 0.035 * inOutCubic(prog(t, 0, 20));
+    ctx.translate(960, 540); ctx.scale(k, k); ctx.translate(-960, -540);
+  }
+  sceneWords(t); scenePanel(t); sceneChips(t); sceneCounter(t);
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  sceneFinale(t);
+}
+
+async function loadFonts() {
+  const base = new URL('../../../shared/vendor/', location.href).href;
+  const faces = [new FontFace('Inter', 'url("' + base + 'Inter-UcCo3FwrK3iLTcviYwY.woff2")', { weight: '100 900' }),
+    new FontFace('JetBrains Mono', 'url("' + base + 'JetBrainsMono-tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwg.woff2")', { weight: '100 900' })];
+  for (const f of faces) { await f.load(); document.fonts.add(f); }
+}
+window.setup = s => { if (s) STATS = Object.assign(STATS, s); };
+window.draw = draw;
+window.DUR = DUR;
+window.ready = loadFonts().then(() => { layout(); draw(0); return true; });
+// opened directly in a browser: play it in real time (reload to restart)
+if (!navigator.webdriver) window.ready.then(() => { const t0 = performance.now(); (function f() { const t = (performance.now() - t0) / 1000; draw(Math.min(t, DUR)); if (t < DUR) requestAnimationFrame(f); })(); });
+</script>
+</body>
+</html>

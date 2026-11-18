@@ -1,0 +1,47 @@
+[
+ {
+  "id": "T1",
+  "pass": true,
+  "detail": "AB 405s (plan 420s), C 180s (plan 180s), D 300s (plan 300s)"
+ },
+ {
+  "id": "T2",
+  "pass": true,
+  "detail": "total 14:45"
+ },
+ {
+  "id": "A1",
+  "pass": true,
+  "detail": "12 slides checked"
+ },
+ {
+  "id": "R1",
+  "pass": true,
+  "detail": "12 slides clean"
+ },
+ {
+  "id": "Q1",
+  "pass": true,
+  "detail": "10 quotes match their sources"
+ },
+ {
+  "id": "N1",
+  "pass": true,
+  "detail": "11 numbers and the 2019 R code check out"
+ },
+ {
+  "id": "F1",
+  "pass": true,
+  "detail": "9 files present"
+ },
+ {
+  "id": "H1",
+  "pass": true,
+  "detail": "7 PASS, 0 FAIL"
+ },
+ {
+  "id": "W1",
+  "pass": true,
+  "detail": "clean"
+ }
+]

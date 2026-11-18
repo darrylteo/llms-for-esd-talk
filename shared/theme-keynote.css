@@ -1,0 +1,35 @@
+/* Keynote Dark: lecture 1 theme. Swap this file to re-theme the series.
+   Layout concept: a black stage, one claim per slide in large type, evidence drawn live underneath.
+   The five layer colours are the deck's legend: every prompt-stack diagram uses them the same way. */
+:root {
+  color-scheme: dark;
+  --bg: #000000;
+  --surface: #121214;
+  --surface-2: #1c1c1f;
+  --line: #2c2c30;
+  --ink: #f5f5f7;
+  --mute: #8e8e93;
+  --dim: #7c7c82;
+
+  /* prompt-stack legend */
+  --l-sys: #2997ff;   /* system instructions + tools: cached globally */
+  --l-proj: #bf5af2;  /* CLAUDE.md + memory: cached per project */
+  --l-sess: #40c8e0;  /* session state: cached per session */
+  --l-conv: #a1a1a6;  /* conversation: grows each turn */
+  --l-new: #ff9f0a;   /* new message / uncached tokens */
+  --cached: #30d158;  /* cache hit */
+  --bad: #ff453a;     /* cache miss, failure */
+
+  --accent: var(--l-sys);
+
+  --f-display: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --f-body: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --f-mono: "JetBrains Mono", "Cascadia Mono", Consolas, monospace;
+
+  --t-hero: 132px;
+  --t-h1: 66px;
+  --t-h2: 44px;
+  --t-body: 32px;
+  --t-small: 24px;
+  --t-cap: 19px;
+}

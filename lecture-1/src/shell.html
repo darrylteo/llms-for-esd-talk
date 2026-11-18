@@ -1,0 +1,34 @@
+<title>LLMs for ESD</title>
+<!--FONTS-->
+<style>
+/*THEME*/
+/*DECKCSS*/
+</style>
+<div id="viewport"><div id="stage">
+<!--SLIDES-->
+</div></div>
+<div id="progress"></div>
+<nav id="nav" aria-label="Slides"><div class="nav-tip" id="nav-tip"></div><div class="nav-row" id="nav-row"></div></nav>
+<div id="notes-overlay" hidden></div>
+<div id="presenter">
+  <div class="clock"></div>
+  <div class="frames">
+    <div class="frame now"><iframe title="Current slide"></iframe></div>
+    <div class="frame next"><iframe title="Next slide"></iframe></div>
+  </div>
+  <div class="notes-pane"></div>
+</div>
+<script>
+(function () { const errs = [];
+  const note = m => { errs.push(String(m).slice(0, 160)); document.body && document.body.setAttribute('data-errors', errs.join(' | ')); };
+  window.addEventListener('error', e => note(e.message));
+  const cerr = console.error.bind(console); console.error = (...a) => { note(a.map(String).join(' ')); cerr(...a); }; })();
+</script>
+<!--D3-->
+<script>window.STATS = /*STATS*/;</script>
+<script>
+/*SLIDESJS*/
+</script>
+<script>
+/*ENGINEJS*/
+</script>

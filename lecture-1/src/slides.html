@@ -1,0 +1,590 @@
+<!-- ===================== A. HOOK + INTRO (1:00) ===================== -->
+<section class="slide" id="s-hook" data-section="A Hook" data-t="25" data-film="25" data-nonum="1">
+  <svg id="hook-svg" viewBox="0 0 1920 1080" width="1920" height="1080" style="position:absolute;inset:0"></svg>
+  <div class="film" data-src="film/opening.mp4"></div>
+  <aside class="notes">
+    <p>[Black screen until you click. Click once to start the 25-second opening film (film/opening.mp4, with music; if the file is missing the same sequence plays as a silent animation). Stay silent while it runs. A second click jumps to the last line.]</p>
+    <p>[Let the last line sit for a beat, then go to the next slide.]</p>
+  </aside>
+</section>
+
+<section class="slide" id="s-promise" data-section="A Hook" data-t="35">
+  <div class="kicker">Guest lecture · <b>LLMs for ESD</b></div>
+  <h1 class="claim">I went from skeptic to daily user by trusting <em>receipts</em>, not the model.</h1>
+  <div class="body row" style="gap:56px;align-items:center">
+    <div style="width:1080px"><svg id="trustcurve-svg" viewBox="0 0 1080 560" width="1080" height="560"></svg></div>
+    <div class="col grow" style="gap:20px">
+      <div data-step="1" class="col" style="gap:6px"><p class="mono small mute">WHAT TRUST LETS YOU HAND OVER</p>
+        <svg id="agents-svg" class="illustrative" viewBox="0 0 540 366" width="540" height="366"></svg></div>
+      <div class="quote" data-step="3" style="font-size:26px">“The only way to cope in that when you're in that situation is just to kind of lock in and micromanage your agents.”<cite>Lauren Tan, on the bottom rung, 26:41</cite></div>
+    </div>
+  </div>
+  <div class="src">Trust curve redrawn from my LinkedIn series (claudetober, Day 30).</div>
+  <aside class="notes">
+    <p>[Introduce yourself.] Hands up if you used an AI this week. Keep it up if you trusted it without checking. [pause]</p>
+    <p>[click] My trust curve. A year ago I was down here, babysitting one agent. As trust climbs, I hand over more. [click] What moved me up: checks that hand me a receipt.</p>
+    <p>[click] Lauren Tan: at the bottom, you micromanage. If you don't trust one agent, you'll never run a hundred.</p>
+  </aside>
+</section>
+
+
+<!-- ===================== B1. WHAT THE MODEL IS (3:30) ===================== -->
+<section class="slide" id="s-token" data-section="B1 Model" data-t="50">
+  <div class="kicker"><b>Build</b> · what the model is</div>
+  <h1 class="claim">An LLM writes one token at a time, choosing from <em>probabilities</em>.</h1>
+  <div class="body"><svg id="token-svg" class="illustrative" viewBox="0 0 1680 640" width="1680" height="640"></svg></div>
+  <div class="src">Probabilities are illustrative. A token is about ¾ of an English word; prices are quoted per million tokens.</div>
+  <aside class="notes">
+    <p>I'll use Claude for examples; the ideas apply to any model. Start with the one thing a language model actually does. It reads text as tokens, pieces of words. [click] For the next position it computes a probability for every token in its vocabulary.</p>
+    <p>[click] It picks one, appends it, [click] and runs the whole thing again for the next token. That is all generation is: predict, pick, append, repeat.</p>
+    <p>Two consequences. Everything is priced and limited in tokens. And the output is sampled, so the same prompt can give a different answer next time. Keep that in mind when we get to evals. It also explains a classic weakness: the model sees pieces of words, so exact counting and arithmetic are better left to a tool.</p>
+  </aside>
+</section>
+
+<section class="slide" id="s-train" data-section="B1 Model" data-t="45">
+  <div class="kicker"><b>Build</b> · what the model is</div>
+  <h1 class="claim">It learns by <em>reading, imitating and practising</em>.</h1>
+  <div class="body row" style="align-items:flex-start;gap:40px;margin-top:20px">
+    <div class="panel grow col" data-step="1"><div class="big sm">1</div><h2>Read</h2><p class="mute">Pre-training on internet-scale text. Language and facts.</p></div>
+    <div class="panel grow col" data-step="2"><div class="big sm">2</div><h2>Imitate</h2><p class="mute">Fine-tuning on good examples, including agents at work.</p></div>
+    <div class="panel grow col" data-step="3"><div class="big sm">3</div><h2>Practise</h2><p class="mute">Reinforcement learning. Rewarded when the result checks out.</p></div>
+  </div>
+  <div class="src">After L. Robinson, Stanford CS146S "How always-on agents work" (34:33)</div>
+  <aside class="notes">
+    <p>How does it get those probabilities? Three stages. [click] First it reads: billions of documents, always predicting the next token. That gives it language and a lot of facts.</p>
+    <p>[click] Then it imitates. People show it what a good assistant answer looks like, and now also what an agent working inside a tool like Claude Code looks like.</p>
+    <p>[click] Then it practises. It attempts tasks and gets rewarded when the result checks out. Notice that third stage needs a way to check the result. That idea comes back at the end of the talk.</p>
+  </aside>
+</section>
+
+<section class="slide" id="s-stateless" data-section="B1 Model" data-t="55">
+  <div class="kicker"><b>Build</b> · what the model is</div>
+  <h1 class="claim">The model is <em>stateless</em>, so every call starts from zero.</h1>
+  <div class="body"><svg id="stateless-svg" class="illustrative" viewBox="0 0 1680 600" width="1680" height="600"></svg></div>
+  <div class="src">Legend: <span style="color:var(--l-sys)">■</span> instructions <span style="color:var(--l-conv)">■</span> conversation so far <span style="color:var(--l-new)">■</span> new message</div>
+  <aside class="notes">
+    <p>This is the most important technical fact of the talk. The model has no memory between calls. It is stateless.</p>
+    <p>[click] On the left is what you see: a chat that seems to remember. [click] On the right is what the model actually receives. Call one is the instructions plus your message. [click] Call two is the instructions, your first message, its first reply, and your new message, all sent again from scratch.</p>
+    <p>Think of a brilliant consultant with amnesia who rereads the entire project file before every meeting. It is also why a long chat gets slower and more expensive: every turn re-sends everything before it. Everything that follows, harnesses, caching, memory, exists because of this one fact.</p>
+  </aside>
+</section>
+
+<section class="slide" id="s-window" data-section="B1 Model" data-t="60">
+  <div class="kicker"><b>Build</b> · what the model is</div>
+  <h1 class="claim">Everything it knows about your task has to fit in the <em>context window</em>.</h1>
+  <div class="body row" style="align-items:center">
+    <div class="grow"><svg id="window-svg" viewBox="0 0 1000 590" width="1000" height="590"></svg></div>
+    <div class="col" style="width:560px">
+      <div data-step="1"><p class="mute small mono">QUICK QUESTION</p><p style="font-size:40px;font-weight:600">How many pages is a million tokens?</p></div>
+      <div data-step="2"><div class="big sm">≈ 2,500</div><div class="stat-label">1M tokens ≈ 750k words ≈ 2,500 pages at 300 words a page</div></div>
+      <div data-step="3"><p>Fill it with noise and quality drops while the bill rises.</p></div>
+    </div>
+  </div>
+  <div class="src">A 1M-token window is now normal on frontier models; Claude Code defaults to 1M (Kun Chen, 34:55). My LinkedIn series (claudetober), Day 3.</div>
+  <aside class="notes">
+    <p>So the only memory is the context window, the text sent with each call. [click] Quick question, shout it out: how many pages is a million tokens? [wait for guesses]</p>
+    <p>[click] About two and a half thousand pages, a small shelf of textbooks. A million-token window is now the normal size on frontier models.</p>
+    <p>[click] Big, but not free. As the window fills with old, irrelevant material, the model starts missing your intent, and because the whole window is re-sent every turn, the cost climbs too. Think of it as the model's working memory: whatever is not loaded into it is invisible, however capable the model is.</p>
+  </aside>
+</section>
+
+<!-- ===================== B2. BUILD: THE HARNESS (7:30) ===================== -->
+<section class="slide" id="s-eras" data-section="B2 Harness" data-t="55">
+  <div class="kicker"><b>Build</b> · the harness</div>
+  <h1 class="claim">In two years we went from copy-pasting answers to <em>agents that work while we sleep</em>.</h1>
+  <div class="body col" style="gap:26px">
+    <div class="row" style="gap:24px">
+      <div class="panel grow col" data-step="1" style="gap:10px;padding:24px 26px"><div class="kicker">Era 1 · copy-paste</div><svg class="vig" id="era1-svg" viewBox="0 0 340 170" width="340" height="170"></svg></div>
+      <div class="panel grow col" data-step="2" style="gap:10px;padding:24px 26px"><div class="kicker">Era 2 · terminal agent</div><svg class="vig" id="era2-svg" viewBox="0 0 340 170" width="340" height="170"></svg></div>
+      <div class="panel grow col" data-step="3" style="gap:10px;padding:24px 26px"><div class="kicker">Era 3 · you approve all</div><svg class="vig" id="era3-svg" viewBox="0 0 340 170" width="340" height="170"></svg></div>
+      <div class="panel grow col" data-step="4" style="gap:10px;padding:24px 26px;border-color:var(--l-sys)"><div class="kicker"><b>Era 4 · always on</b></div><svg class="vig" id="era4-svg" viewBox="0 0 340 170" width="340" height="170"></svg></div>
+    </div>
+    <div data-step="5"><svg id="eras-svg" viewBox="0 0 1680 250" width="1680" height="250"></svg></div>
+  </div>
+  <div class="src">Eras after L. Robinson, CS146S (2:37–4:07). Sessions: my local Claude Code logs, 14 Aug – 16 Oct 2026; scripted = headless claude -p runs.</div>
+  <aside class="notes">
+    <p>Lee Robinson, who builds these agents at SpaceX, describes four eras. [click] First we copy-pasted answers out of a chatbot into our files. [click] Then the model got hands: an agent in the terminal that edits files and runs commands itself. [click] Then many agents in parallel, but you still approved every single command. [click] Now: agents with their own computer and memory that keep working while you sleep.</p>
+    <p>[click] Where am I? Of my sessions in the last nine weeks, 275 were started by my own scripts and 117 by me typing. Seven in ten now start without me, mostly short batch jobs like graders. A year ago I was the skeptic in the office.</p>
+  </aside>
+</section>
+
+
+<section class="slide" id="s-loop" data-section="B2 Harness" data-t="60">
+  <div class="kicker"><b>Build</b> · the harness</div>
+  <h1 class="claim">An agent is just a model <em>calling tools in a loop</em>.</h1>
+  <p class="small mute" style="margin-top:-14px">The <b style="color:var(--ink)">harness</b> is the program around the model, such as Claude Code, that runs the tools for it.</p>
+  <div class="body row" style="align-items:center;gap:60px">
+    <div style="width:760px"><svg id="loop-svg" viewBox="0 0 760 600" width="760" height="600"></svg></div>
+    <div class="col grow swap" data-step="2" data-until="2">
+      <p class="mono small mute">A REAL LOOP · BUILDING THIS DECK</p>
+      <pre class="term exhibit panel" id="term-loop"></pre>
+    </div>
+    <div class="col grow" data-step="3" style="position:absolute;right:0;top:0;bottom:0;justify-content:center">
+      <p class="mono small mute">MY TOOL CALLS, 9 WEEKS</p>
+      <svg id="tools-svg" viewBox="0 0 860 440" width="860" height="440"></svg>
+    </div>
+  </div>
+  <div class="src">Tool counts from my local Claude Code logs (14 Aug – 16 Oct 2026). Loop after L. Robinson, CS146S (13:38).</div>
+  <aside class="notes">
+    <p>What turned a chatbot into an agent? A loop. [click] The model gets a task and decides to call a tool: run a command, read a file, search the web. [click] The tool's result is appended to the context, the model is called again, and it decides the next step, until it decides it is done. On the right are real steps from building this deck: read my blog, fetch the caching docs, run the stats script, write a slide, run the checks.</p>
+    <p>That is the whole trick. The model never touches your computer. The harness does, on its behalf.</p>
+    <p>[click] My own mix: over eleven thousand tool calls in nine weeks, and the top one by far is the shell. Most of what an agent does is ordinary computer work, done very fast. In Claude Code you can watch it happen: each line in the session is one trip around this loop, and a typical task takes dozens of trips.</p>
+  </aside>
+</section>
+
+<section class="slide" id="s-toolcall" data-section="B2 Harness" data-t="55">
+  <div class="kicker"><b>Build</b> · the harness</div>
+  <h1 class="claim">A tool call is a key the model is <em>allowed to press</em>.</h1>
+  <div class="body row" style="gap:44px;align-items:center">
+    <div class="col" style="width:900px;gap:12px">
+      <div class="clip" data-clip="clips/game-bot.mp4" style="width:900px;height:506px;min-height:0">
+        <svg id="game-svg" viewBox="0 0 900 520" width="900" height="506" preserveAspectRatio="xMidYMid slice"></svg>
+      </div>
+      <p class="mono small mute">MAPLESTORY · THE KIND OF PLAY MY BOT AUTOMATED</p>
+    </div>
+    <div class="col grow" style="gap:22px">
+      <div data-step="1" class="col" style="gap:8px"><p class="mono small mute">MY OLD GAME BOT · REAL CODE, EXCERPT</p><pre class="term exhibit panel verbatim" id="term-bot" style="font-size:19px;line-height:1.5;padding:18px 22px;min-height:340px"></pre></div>
+      <div data-step="2" class="col" style="gap:8px"><p class="mono small mute">AN AGENT</p><pre class="term exhibit panel" id="term-agent" style="font-size:21px;padding:14px 22px"></pre></div>
+      <p data-step="3" style="font-size:32px;font-weight:600">Same buttons. The model chooses which one.</p>
+    </div>
+  </div>
+  <div class="src">Footage: "Lash TP Farming Demo", Wout, YouTube (youtube.com/watch?v=_7C2f69xpEc). Code: my MapleStory bot. MCP gives a model a map of an app's buttons: my LinkedIn series (claudetober), Day 24.</div>
+  <aside class="notes">
+    <p>Before LLMs I wrote scripts that played MapleStory for me. This is someone else's run, but it is the kind of play my bot automated. [click] Real code from my bot: every action is a simulated key press, with random pauses so it looks human. I wrote every if-statement myself.</p>
+    <p>[click] An agent's tool call is the same thing: a named button, like run this command. The difference is who decides. [click] My bot followed my rules; the model reads the situation and chooses the next button. MCP is a standard way to hand it a map of an app's buttons.</p>
+  </aside>
+</section>
+
+
+<section class="slide" id="s-stack" data-section="B2 Harness" data-t="75">
+  <div class="kicker"><b>Build</b> · the harness</div>
+  <h1 class="claim">Every request is a stack, built from the <em>most stable layer down</em>.</h1>
+  <div class="body"><svg id="stack-svg" viewBox="0 0 1680 640" width="1680" height="640"></svg></div>
+  <div class="src">Layout: T. Shihipar, "Lessons from building Claude Code: prompt caching is everything", claude.dev, 30 Apr 2026 (Fig. A). API order tools → system → messages: Anthropic prompt-caching docs.</div>
+  <aside class="notes">
+    <p>So what exactly gets sent on every call? This is the stack Claude Code builds, from Anthropic's own write-up.</p>
+    <p>[click] At the top, the base instructions and tool definitions. Identical for every user, so they are cached globally. [click] Then your project notes, a plain file called CLAUDE.md where you write how this project works, plus memory. Same for every session in the project. [click] Then session settings: which folder it is working in and which apps are connected, such as email or a browser. [click] Then the conversation, which grows every turn. [click] And last, small system reminders, attached to your newest message rather than edited into the top.</p>
+    <p>[click] The model reads the whole stack and writes a reply. [click] That reply is appended to the conversation, and next turn the whole stack goes again. Stable things on top, changing things at the bottom. Hold on to that order; in five minutes it explains your bill.</p>
+  </aside>
+</section>
+
+<section class="slide" id="s-skills" data-section="B2 Harness" data-t="50">
+  <div class="kicker"><b>Build</b> · the harness</div>
+  <h1 class="claim">A skill is your full spec, <em>written once</em> and loaded only when needed.</h1>
+  <div class="body row" style="gap:44px;align-items:flex-start">
+    <div class="col" style="width:380px;gap:14px" data-step="1">
+      <p class="mono small mute">WHAT I TELL MY FRIENDS</p>
+      <div class="panel" style="border-radius:26px 26px 26px 6px;padding:20px 26px"><p>“Can you make a nice video for my app?”</p></div>
+      <div class="meme-box" style="width:380px;height:391px"><img class="meme meme-float" src="assets/meme-friends.jpg" alt="Cartoon rabbit smiling at a phone" style="width:380px;height:391px"></div>
+    </div>
+    <div class="col grow" data-step="2" style="gap:12px">
+      <p class="mono small mute">WHAT I ACTUALLY SEND</p>
+      <div style="position:relative">
+        <pre class="term exhibit panel" id="term-spec" style="min-height:460px;font-size:20px"></pre>
+        <div class="meme-night" style="position:absolute;right:1px;top:1px;bottom:1px;width:250px">
+          <img class="meme" src="assets/meme-actual.jpg" alt="The same rabbit, grumpy at a laptop late at night" style="width:250px;height:100%;border-radius:0 17px 17px 0">
+          <div class="meme-glow"></div>
+          <div class="meme-clock mono illustrative" id="meme-clock">21:00</div>
+        </div>
+      </div>
+      <div data-step="3" class="col" style="gap:8px;margin-top:8px">
+        <p class="mono small mute">SAVED AS SKILLS · ONLY NAMES SIT IN THE STACK</p>
+        <div class="mono small exhibit"><span style="color:var(--l-proj)">product-video</span> · <span style="color:var(--l-proj)">writing-style</span> · <span style="color:var(--l-proj)">adversarial-review</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="src">Meme and spec: my LinkedIn series (claudetober), Day 10 (AI-generated image); spec from my prompt library (prompts.txt, VIDEOS). Skills and deferred tools: Shihipar, claude.dev, 30 Apr 2026.</div>
+  <aside class="notes">
+    <p>[click] This is what I tell my friends I ask for: a cheerful one-liner. [click] And this is what I actually send, usually at midnight: frame size, rendering method, lighting, timing on the beat, title fonts, shot structure. Lauren Tan says the bottleneck now is expressing your intent clearly, and this is what that looks like.</p>
+    <p>[click] You don't want to retype that every time, so it becomes a skill: a folder with a markdown file. Only its name and one-line description sit in the stack; the full spec loads when a task needs it. Rarely used tools work the same way, as name-only stubs, so the top of the stack never changes.</p>
+  </aside>
+</section>
+
+
+<section class="slide" id="s-determinism" data-section="B2 Harness" data-t="60">
+  <div class="kicker"><b>Build</b> · the harness</div>
+  <h1 class="claim">Give the counting to <em>scripts</em>. Keep the agent for judgment.</h1>
+  <div class="body col" style="gap:30px">
+    <svg id="det-svg" viewBox="0 0 1680 200" width="1680" height="200"></svg>
+    <div class="row" style="gap:28px">
+      <div class="panel grow" data-step="2"><div class="big sm" id="cnt-numbers">0</div><div class="stat-label">values in my paper, each written by a script</div></div>
+      <div class="panel grow" data-step="3"><div class="big sm"><span id="cnt-closed">0</span> <span class="mute" style="font-size:48px">of 38</span></div><div class="stat-label">sources not open access, flagged for me</div></div>
+      <div class="panel grow" data-step="4"><div class="big sm" id="cnt-rules">0</div><div class="stat-label">lab rules enforced by scripts</div></div>
+    </div>
+    <div class="quote" data-step="5" style="font-size:30px">“I try to extract out the deterministic parts and turn that into code and just leave only the parts that actually require judgment to the agent.”<cite>Lauren Tan (Poteto, pstack), with Matt Pocock, live Q&amp;A, 21:47</cite></div>
+  </div>
+  <div class="src">paper/numbers.tex (generated by paper_numbers.py); paper/REVIEW.md, sources table; LESSONS.txt and evals/check_learnings.py (12 checks), CV + Isaac Sim project.</div>
+  <aside class="notes">
+    <p>[click] Some questions need judgment: is this argument convincing, which result matters most. Others are counts. A count never needs an opinion, so it should never be left to the model's mood that day.</p>
+    <p>[click] Every one of these numbers in my paper is written by a script, straight from the results. [click] The review tags every source's access, so of 38 sources I knew exactly which 10 were not open access and needed checking by hand. [click] And in my computer-vision project, 12 rules are enforced by scripts, because a rule I wrote in plain English was broken five times before a script checked it.</p>
+    <p>[click] Lauren Tan's principle: extract the deterministic parts into code, leave only judgment to the agent.</p>
+  </aside>
+</section>
+
+
+<section class="slide" id="s-firstmate" data-section="B2 Harness" data-t="80">
+  <div class="kicker"><b>Build</b> · the harness</div>
+  <h1 class="claim">Talk to one <em>first mate</em>, and let it run the crew.</h1>
+  <div class="body"><svg id="crew-svg" viewBox="0 0 1680 660" width="1680" height="660"></svg></div>
+  <p class="small mute" data-step="6" style="margin-top:-28px">For you: Claude Code already sends searches to helper agents, and you can ask it to.</p>
+  <div class="src">Kun Chen, "High Throughput Agentic Engineering" (1:09, 7:52, 22:18, 30:50, 38:16). Always-on: L. Robinson, CS146S (11:16).</div>
+  <aside class="notes">
+    <p>[Drawn as a Hololive Gen 3 gag: Marine is the captain, and Pekora, Flare, Noel and a nousagi crew the fleet in her pirate hat.] Kun Chen, formerly a principal engineer at Meta and Microsoft, runs dozens of agents. His setup is nautical, so I drew it that way. [click] You are the captain. You only ever talk to one agent, the first mate. It holds your intent and does no heavy work itself, so it is always free to talk.</p>
+    <p>[click] For each job it sends out a crewmate in its own boat, with its own clean chart. A rule file picks the model for the job: the strongest for hard planning, a cheaper one for a simple bug fix, whichever has quota left. [click] Crewmates come back with a short report, never the whole voyage, so the first mate's context stays small. That is my blog's CCS: cost, context, speed.</p>
+    <p>[click] When the fleet grows, second mates command their own ships for a domain, an app or a paper. [click] Messages from shore, Slack, Discord, email, a schedule, are relayed to the first mate even while you sleep. That is what always-on means. [click] And cargo is inspected by risk: toy projects merge straight away, anything you would have asked a colleague to review goes through a hostile review first.</p>
+  </aside>
+</section>
+
+
+
+
+
+<section class="slide" id="s-trust" data-section="B2 Harness" data-t="55">
+  <div class="kicker"><b>Build</b> · the harness</div>
+  <h1 class="claim">Trust is engineered, and a reviewer model <em>beats approval fatigue</em>.</h1>
+  <div class="body row" style="gap:56px;align-items:flex-start">
+    <div class="col" style="width:520px" data-step="1">
+      <div class="big">97%</div><div class="stat-label">of permission prompts in Claude Code were simply approved</div>
+    </div>
+    <div class="col grow" data-step="2">
+      <p class="mono small mute">DANGEROUS COMMANDS CAUGHT · 1,053 TESTERS</p>
+      <svg id="trust-svg" viewBox="0 0 1000 220" width="1000" height="220"></svg>
+    </div>
+  </div>
+  <div class="src">C. Phillippi et al., "Auto mode is now the default in Claude Code", claude.com, 7 Aug 2026 (Anthropic's own study). My LinkedIn series (claudetober), Day 10.</div>
+  <aside class="notes">
+    <p>Agents doing real work raises the obvious question: is this safe? [click] Before auto mode, people approved 97 percent of permission prompts. Clicking accept every few seconds is not review.</p>
+    <p>[click] In Anthropic's study with over a thousand testers, humans caught about 14 percent of dangerous commands. A separate reviewer model caught 89 percent. These are Anthropic's own numbers, so treat them as a vendor figure, and humans still caught a few the model missed, so the best design layers both.</p>
+    <p>The other half of trust is data. Anything the agent reads, an email or a web page, is data, never an instruction.</p>
+  </aside>
+</section>
+
+
+<!-- ===================== B3. CONTEXT ENGINEERING (6:00) ===================== -->
+<section class="slide" id="s-cache" data-section="B3 Context" data-t="75">
+  <div class="kicker"><b>Build</b> · context engineering</div>
+  <h1 class="claim">Caching matches the prefix exactly, so one changed byte <em>re-bills everything after it</em>.</h1>
+  <div class="body"><svg id="cache-svg" class="illustrative" viewBox="0 0 1680 600" width="1680" height="600"></svg></div>
+  <div class="src">"Prompt caching is prefix matching. Any change anywhere in the prefix invalidates everything after it." Shihipar, claude.dev, 2026. Cache read 0.05× base price on Opus 5.5 (Anthropic pricing).</div>
+  <aside class="notes">
+    <p>Remember the model is stateless and the whole stack is re-sent every turn. That would be ruinous without caching. [click] Turn one: everything is new and paid in full, in orange. [click] Turn two: everything already seen is a cache hit, in green, at a twentieth of the price on Opus 5.5. Only the new message is orange. [click] Turn three, same again. The green part grows, the orange part stays small.</p>
+    <p>[click] Now turn four, in two alternative versions. Version A: someone edits the instructions at the top, say by putting the current time in them. The match is exact, from the first byte. Everything below the edit turns orange and you pay full price for the whole stack.</p>
+    <p>[click] Version B, same turn four: the edit is near the bottom, and only the tail is re-paid. So: never touch the top. It is a familiar systems trade-off: design the stable part once, and make only the variable part pay.</p>
+  </aside>
+</section>
+
+<section class="slide" id="s-append" data-section="B3 Context" data-t="65">
+  <div class="kicker"><b>Build</b> · context engineering</div>
+  <h1 class="claim">Good harnesses add new information <em>without touching the top</em>.</h1>
+  <div class="body row" style="gap:48px;align-items:flex-start">
+    <div style="width:700px"><svg id="append-svg" viewBox="0 0 700 600" width="700" height="600"></svg></div>
+    <ul class="clean grow" style="margin-top:6px">
+      <li data-step="1"><span class="check">✓</span><span><b>Reminders join the newest message</b><br><span class="mute small">Appended as a system reminder.</span></span></li>
+      <li data-step="2"><span class="check">✓</span><span><b>Tools stay, as stubs</b><br><span class="mute small">Loaded by tool search.</span></span></li>
+      <li data-step="3"><span class="check">✓</span><span><b>Compaction reuses the prefix</b><br><span class="mute small">Same stack, one more request.</span></span></li>
+      <li data-step="4"><span class="cross">✗</span><span><b>No model switch mid-session</b><br><span class="mute small">Use a subagent instead.</span></span></li>
+    </ul>
+  </div>
+  <div class="src">Shihipar, claude.dev, 30 Apr 2026. Up to 4 cache breakpoints with a 20-block lookback; mid-conversation system messages and inline tool additions: Anthropic prompt-caching docs.</div>
+  <aside class="notes">
+    <p>So how does a harness keep its hit rate so high when things change all the time? It adds, it never edits. [click] When the date or a file changes, the harness appends a small reminder to your newest message instead of editing the instructions. [click] Tools you rarely use stay as name-only stubs, so the tool list never changes shape. [click] Even compaction, summarising a long session, reuses the exact same stack and only adds the request to summarise.</p>
+    <p>[click] And one trap: switching models mid-session throws the cache away, because each model has its own. The Claude Code team hands that job to a subagent. They treat a drop in hit rate like an outage. Under the hood, the API lets a harness mark up to four cache breakpoints, so tools, project files and conversation are cached as separate tiers and a change only invalidates the tiers after it.</p>
+  </aside>
+</section>
+
+<section class="slide" id="s-receipt" data-section="B3 Context" data-t="60">
+  <div class="kicker"><b>Build</b> · context engineering</div>
+  <h1 class="claim">Cached tokens cost 10–20× less, so my nine-week bill fell <em id="bill-factor">8×</em>.</h1>
+  <div class="body row" style="gap:56px;align-items:center">
+    <div class="col" style="width:600px;gap:30px">
+      <div data-step="1"><p class="mono small mute">GUESS THE BILL AT API PRICES</p><p style="font-size:40px;font-weight:600">Without caching? With caching?</p></div>
+      <div data-step="3"><div class="big sm" id="tok-total">2.36B</div><div class="stat-label" id="tok-relate">tokens processed</div></div>
+    </div>
+    <div class="grow" data-step="2"><svg id="bill-svg" viewBox="0 0 1000 470" width="1000" height="470"></svg></div>
+  </div>
+  <div class="src" id="bill-src">lecture-1/scripts/usage_stats.py over local Claude Code logs, per model at Anthropic list prices; cache reads are 0.05× (Opus 5.5) to 0.1× base price. I pay a flat subscription; these are API-equivalent figures.</div>
+  <aside class="notes">
+    <p>Here is my own receipt. [click] Guess first: at API list prices, what would nine weeks of my Claude Code use cost without caching, and with it? Shout a number. [wait]</p>
+    <p>[click] Without caching, about nine thousand US dollars. With caching, about eleven hundred. A cached token costs a tenth to a twentieth of a fresh one, but the bill only fell about eight times, because two things are never discounted: writing the cache the first time, and the model's own output. I pay a flat subscription, so this saving is the provider's, which is why they can offer generous limits.</p>
+    <p>[click] The volume: over two billion tokens, roughly seven thousand engineering textbooks. Nearly all of it was the same stable stack, re-read from cache.</p>
+  </aside>
+</section>
+
+
+<section class="slide" id="s-compact" data-section="B3 Context" data-t="75">
+  <div class="kicker"><b>Build</b> · context engineering</div>
+  <h1 class="claim">When the window fills, the agent summarises, and <em>every summary loses something</em>.</h1>
+  <div class="body row" style="gap:56px;align-items:flex-start">
+    <div style="width:820px"><svg id="compact-svg" class="illustrative" viewBox="0 0 820 600" width="820" height="600"></svg></div>
+    <div class="col grow" style="gap:26px">
+      <div class="panel col" data-step="2" style="gap:12px;padding:24px 26px">
+        <p class="mono small" style="color:var(--l-new)">CLAUDE PLAYS POKÉMON, 2025</p>
+        <p class="small">Context full every ~50 button presses. 8 hours spent dismissing a doormat.</p>
+        <div class="clip loop" data-clip="clips/pokemon-sprou.mp4" data-optional="1" style="width:100%;aspect-ratio:1280/648;min-height:0;border-radius:10px"></div>
+      </div>
+      <div data-step="3">
+        <p class="mono small mute">MEMORY IN LAYERS</p>
+        <p class="small">core facts · dated logs · scratchpad · searchable files</p>
+      </div>
+    </div>
+  </div>
+  <div class="src">My LinkedIn series (claudetober), Day 6. Memory layers: L. Robinson, CS146S (32:56). Compaction is lossy: CS146S (31:49). Clip: official Claude Plays Pokémon Twitch, twitch.tv/claudeplayspokemon/clip/AnnoyingColorfulSharkYee-4_GtJLN_iRAfZsO2</div>
+  <aside class="notes">
+    <p>[click] A long session eventually fills the window. The harness then compacts: it summarises the history into a short note and carries on from there. All compression is lossy, and you cannot choose what gets lost.</p>
+    <p>[click] The best demonstration is Claude Plays Pokémon. Its context filled after about fifty button presses, so it had to write notes to its future self. It once spent eight hours trying to dismiss a doormat it thought was a dialogue box, and it used an Escape Rope fifteen steps from the exit of Mount Moon.</p>
+    <p>[click] So good harnesses keep memory in layers: a few core facts sent every time, dated logs, a scratchpad, and files the agent can search. My own habits: start a fresh session and ask the old one for a short handover file, and when I do compact, I tell it to keep successes in full and summarise each failure in one sentence.</p>
+  </aside>
+</section>
+
+<section class="slide" id="s-debate" data-section="B3 Context" data-t="75">
+  <div class="kicker"><b>Build</b> · context engineering</div>
+  <h1 class="claim">Should you <em>tend your context</em> or ignore it? Two experts disagree.</h1>
+  <div class="body row" style="gap:40px;align-items:flex-start">
+    <div class="panel grow col" data-step="1" style="border-color:var(--l-sys)">
+      <p class="mono small" style="color:var(--l-sys)">TEND IT</p>
+      <p class="quote" style="font-size:32px">“You want to kind of be always gardening and trimming and removing unnecessary stuff from this conversation.”<cite>L. Robinson, CS146S, 29:36</cite></p>
+      <p class="small mute">Cache misses are incidents.</p>
+    </div>
+    <div class="panel grow col" data-step="2" style="border-color:var(--l-new)">
+      <p class="mono small" style="color:var(--l-new)">IGNORE IT</p>
+      <p class="quote" style="font-size:32px">“The biggest bottleneck across everything we do with agents is our attention and time.”<cite>Kun Chen, 33:57</cite></p>
+      <p class="small mute">Auto-compact at 500k tokens.</p>
+    </div>
+  </div>
+  <p data-step="4" style="font-size:36px;font-weight:600;text-align:center">Both are right: harness builders sweat the cache so users can set a default and forget it.</p>
+  <div class="src" data-step="3">★ Hands up: who would spend their attention on it?</div>
+  <aside class="notes">
+    <p>The experts do not agree on this, which is healthy. [click] Lee Robinson says keep gardening the context; the Claude Code team treats a cache drop as an incident. [click] Kun Chen says the opposite: your attention is the scarce resource, so set a compaction threshold and spend your attention on what to build.</p>
+    <p>[click] Show of hands: who sides with Lee? Who with Kun? [count]</p>
+    <p>[click] They are both right, for different people. The people building harnesses obsess over the cache so the rest of us can set a sensible default. For you, the practical rule is short: fresh session per task, and don't edit the top of the stack mid-task. The disagreement is really about who pays. The provider pays for cache misses in money; you pay for babysitting context in attention. Good system design puts each cost where it is cheapest to carry.</p>
+  </aside>
+</section>
+
+<!-- ===================== B4. CHECK + IMPROVE (5:00) ===================== -->
+<section class="slide" id="s-receiptx" data-section="B4 Evals" data-t="60" style="--accent:var(--l-proj)">
+  <div class="kicker"><b>Check</b> · evals</div>
+  <h1 class="claim">“Check your work” is a wish. <em>An eval is a receipt.</em></h1>
+  <div class="body col" style="gap:26px">
+    <div class="panel row" data-step="1" style="align-items:center;gap:28px"><span class="cross" style="font-size:40px">✗</span><p class="mono caret">NEVER use ellipses.</p></div>
+    <div class="panel row" data-step="2" style="align-items:center;gap:28px"><span style="font-size:40px;color:var(--l-new)">~</span><p class="mono caret">Your reply will be read aloud by a text-to-speech engine, so never use ellipses; it cannot pronounce them.</p></div>
+    <div class="panel row" data-step="3" style="align-items:center;gap:28px;border-color:var(--cached)"><span class="check" style="font-size:40px">✓</span><p class="mono caret">… then spawn a subagent that <span style="color:var(--cached)">counts the ellipses</span> and reports the number.</p></div>
+  </div>
+  <div class="src">my LinkedIn series (claudetober), Days 13–14; first two prompts from Anthropic's Claude prompting best practices.</div>
+  <aside class="notes">
+    <p>Now the second part: check. How do I know the output is right? [click] A bare rule like "never use ellipses" is weak. [click] Better, from Anthropic's own guide: give the reason, because the model generalises from reasons. [click] Best: add a check that produces a number, here a subagent that counts the ellipses.</p>
+    <p>That is an eval: a receipt with a score. You pay for the output with time or money, so ask for proof it meets the brief. Teachers told us to check our work for years; evals are how we say it to a model. The jump from the second prompt to the third is the jump from asking to measuring. A number can be tracked over time, compared between models, and used to stop a loop when it hits zero.</p>
+  </aside>
+</section>
+
+<section class="slide" id="s-goodeval" data-section="B4 Evals" data-t="75" style="--accent:var(--l-proj)">
+  <div class="kicker"><b>Check</b> · evals</div>
+  <h1 class="claim">Good evals are <em>cheap, specific and stable</em>.</h1>
+  <div class="body col" style="gap:30px">
+    <div data-step="1"><p class="mono small mute">★ SPOT THE BAD EVAL · HANDS UP FOR A OR B</p></div>
+    <div class="row" style="gap:32px" data-step="1">
+      <div class="panel grow exhibit" id="eval-a"><p class="mono small mute">A</p><p style="margin-top:10px">“Rate the reference section from 1 to 10.”</p></div>
+      <div class="panel grow exhibit" id="eval-b"><p class="mono small mute">B</p><p style="margin-top:10px">“Count the citations that do not follow APA 7th edition.”</p></div>
+    </div>
+    <p data-step="2" style="font-size:30px">A drifts between runs. B repeats, and points at the fix.</p>
+    <div class="row" style="gap:32px" data-step="3">
+      <div class="grow"><p class="mono small mute">AI GRADERS FAVOUR</p><p style="margin-top:8px">first · longer · their own</p></div>
+      <div class="grow"><p class="mono small mute">SO</p><p style="margin-top:8px">shuffle · penalise length · switch model</p></div>
+    </div>
+  </div>
+  <div class="src">Low run-to-run variance, programmatic graders where possible: L. Martin, "Automating eval design and hillclimbing", claude.dev, 28 Sep 2026. Judge biases: Stanford LLM-evaluation lecture, my LinkedIn series (claudetober), Day 16.</div>
+  <aside class="notes">
+    <p>[click] Quick quiz: which is the bad eval, A or B? Hands up for A. Hands up for B.</p>
+    <p>[click] A is the bad one. Ask twice and you get a 7 and then an 8. B is a count: same answer every run, and it tells you exactly what to fix. Anthropic's eval guide says the same: low run-to-run variance, and code-based graders whenever the output is constrained.</p>
+    <p>[click] When you do need an AI grader, know its biases. It prefers the first option, the longer answer, and its own writing. So shuffle the order, penalise length, and grade with a different model. Two more tests from Anthropic's guide. Your strongest model at its highest effort should still score well below one hundred percent, or the eval cannot separate good from better. And a good task is one where two domain experts would give the same verdict. If your experts disagree, fix the task before you blame the model.</p>
+  </aside>
+</section>
+
+<section class="slide" id="s-hill" data-section="B4 Evals" data-t="70" style="--accent:var(--cached)">
+  <div class="kicker"><b>Improve</b> · hill-climbing</div>
+  <h1 class="claim">Hill-climbing is optimisation, with your <em>prompt as the decision variable</em>.</h1>
+  <div class="body row" style="gap:48px;align-items:flex-start">
+    <div style="width:860px"><svg id="climb-svg" class="illustrative" viewBox="0 0 860 600" width="860" height="600"></svg></div>
+    <div class="col grow" style="gap:26px">
+      <div data-step="2"><p class="mono small" style="color:var(--cached)">USE IT WHEN YOU HAVE</p><p class="small" style="margin-top:8px">a score you trust · cheap tries · many of them</p></div>
+      <div data-step="3"><p class="mono small" style="color:var(--bad)">SKIP IT FOR</p><p class="small" style="margin-top:8px">taste · one-off decisions · scores you can't check</p></div>
+      <div class="quote" data-step="4" style="font-size:28px">“Have some kind of rubric or a way to judge or score something. And now because you have a loop, you can have an agent continually try to make improvements to that.”<cite>Lauren Tan, 18:20</cite></div>
+    </div>
+  </div>
+  <div class="src">Loop after A. Karpathy's autoresearch (Mar 2026): one editable file, one metric, a fixed time budget, keep or revert. "Climbing on the evals": L. Robinson, CS146S (36:53).</div>
+  <aside class="notes">
+    <p>Third part: improve. This is optimisation from 40.002 again, local search, except the decision variable is your prompt. [click] The loop is short. Change one thing, a sentence in the prompt or the model you use. Run your evals. If the score went up, keep it; if not, revert. Repeat, often hundreds of times, with an agent doing the trying. Karpathy's autoresearch is exactly this: one file it may edit, one number, a fixed time per try.</p>
+    <p>[click] It fits when you have a score you trust, tries are cheap, and you can afford many of them. [click] It does not fit taste, one-off decisions, or any score you can't check, because the agent will happily climb the wrong hill.</p>
+    <p>[click] Lauren Tan's point: the loop only exists because something can score the result.</p>
+  </aside>
+</section>
+
+<section class="slide" id="s-hill-ex" data-section="B4 Evals" data-t="60" style="--accent:var(--cached)">
+  <div class="kicker"><b>Improve</b> · hill-climbing</div>
+  <h1 class="claim">Anthropic's own climb made a support agent better and <em>about five times cheaper</em>.</h1>
+  <div class="body row" style="gap:40px;align-items:flex-start">
+    <div style="width:1000px"><svg id="hill-svg" viewBox="0 0 1080 600" width="1000" height="556"></svg></div>
+    <div class="col grow" style="gap:14px" data-step="1">
+      <p class="mono small mute">WHAT EACH STEP CHANGED</p>
+      <svg id="myclimb-svg" viewBox="0 0 640 560" width="640" height="560"></svg>
+    </div>
+  </div>
+  <div class="src">L. Martin, "Automating eval design and hillclimbing", claude.dev, 28 Sep 2026: internal customer-support benchmark, 30 search tickets and 14 held out; decision accuracy and cost per ticket.</div>
+  <aside class="notes">
+    <p>Here is a real climb, from Anthropic's own write-up. A customer-support agent, scored on decision accuracy and cost per ticket. [click] It starts at 74 percent and 4.6 cents a ticket on Opus 4.8. [click] The climb audited the prompt: it deleted mandatory tool-call rituals, a scratchpad step and rules that contradicted each other, and moved to Opus 5.5 at low effort. 88 percent at 1.9 cents. [click] Once the bar was cleared, it tried a cheaper model with the same prompt: 89 percent at one cent. [click] Then it added routing rules and a cross-reference to the refund cap: 99 percent, still one cent.</p>
+    <p>[click] And the part that makes it trustworthy: 14 tickets were held back and never used during the climb. On those, the agent went from 79 to 91 percent, at about a fifth of the cost. Without that held-out check you cannot tell a better prompt from one that memorised the test.</p>
+  </aside>
+</section>
+
+
+
+<section class="slide" id="s-twoloops" data-section="B4 Evals" data-t="75" style="--accent:var(--cached)">
+  <div class="kicker"><b>Improve</b> · hill-climbing</div>
+  <h1 class="claim">Products improve in two loops, and <em>evals expire</em>.</h1>
+  <div class="body"><svg id="loops-svg" class="illustrative" viewBox="0 0 1680 560" width="1680" height="560"></svg></div>
+  <div class="src">Fix loop and model loop: L. Robinson, CS146S (36:07–37:04), who calls them inner and outer. "Don't assume the new model is always better": Kun Chen, 2:18. Re-do evals every ~6 months: my LinkedIn series (claudetober), Day 18.</div>
+  <aside class="notes">
+    <p>Zooming out to how the companies building these products work. [click] A fix loop runs daily: the agent gets something wrong, that failure becomes an eval, someone fixes the prompt or the harness, the eval confirms it, and it ships.</p>
+    <p>[click] A model loop runs every few months: a new model is trained, partly on those failures, and dropped in. Lee's team works on the assumption that today's model is the worst one they will ever use.</p>
+    <p>[click] Two consequences for you. Evals expire, so redo them about every six months. And as Kun Chen says, do not assume the new model is better for your task. Measure it with your evals. You can run the fix loop on your own work today. Every time you have to correct Claude, write the correction down. After a week, ask it to turn the list into a skill with a check for each item. Lauren Tan does exactly this by mining her own chat transcripts for corrections.</p>
+  </aside>
+</section>
+
+<!-- ===================== C. APPLICATIONS (7:00) ===================== -->
+<section class="slide" id="s-app-scaffold" data-section="C Applications" data-t="75" style="--accent:var(--l-new)">
+  <div class="kicker"><b>In ESD</b> · aviation systems</div>
+  <h1 class="claim">With the same model, a better scaffold took recall from <em>0.69 to 0.90</em>.</h1>
+  <div class="body row" style="gap:56px;align-items:center">
+    <div class="col" style="width:720px;gap:24px">
+      <p class="mono small mute" data-step="1">TASK</p><p data-step="1" style="margin-top:-16px">Airport CDM manual → class model for airport software.</p>
+      <p class="mono small mute" data-step="2">WHAT CLAUDE DID</p><p data-step="2" style="margin-top:-16px">Wrote the whole model in ~5 minutes.</p>
+      <p class="mono small mute" data-step="3">WHY I TRUST IT</p><p data-step="3" style="margin-top:-16px">Two researchers graded 200 items, blind.</p>
+    </div>
+    <div class="grow" data-step="4"><svg id="scaffold-svg" viewBox="0 0 860 500" width="860" height="500"></svg></div>
+  </div>
+  <div class="src">"Manual Labour" (draft). Recall = share of the manual's statements the model captures. Same model (Sonnet 5), single agent with vs without scaffold: A 0.90 vs 0.69, B 0.90 vs 0.76 (n=53, 35 items). Classes: median per run.</div>
+  <aside class="notes">
+    <p>Now my own work. [click] The airport collaborative decision-making manual describes, in prose, what every airport system must model. [click] Claude agents read the manual's milestone tables and wrote the full class model in about five minutes.</p>
+    <p>[click] Why do I trust it? Because two researchers graded two hundred sampled items against the manual, blind to which pipeline made them.</p>
+    <p>[click] And here is the system-design lesson. Recall here means the share of the manual's statements that made it into the model. Same model, single agent. With a small scaffold, recall was 0.90; without it, 0.69, and the second researcher saw the same drop. Without the scaffold the model also found only 13 classes, against 49 with it. The scaffold was small: a list of modelling conventions, each traced to a published convention or a domain expert, plus a fixed output format.</p>
+  </aside>
+</section>
+
+
+<section class="slide" id="s-app-multi" data-section="C Applications" data-t="45" style="--accent:var(--l-new)">
+  <div class="kicker"><b>In ESD</b> · measure before you scale</div>
+  <h1 class="claim">Six agents cost <em>3.2× more</em> than one, with no significant gain.</h1>
+  <div class="body row" style="gap:80px;align-items:center">
+    <div class="col" data-step="1"><div class="big">$1.76</div><div class="stat-label">six role agents · 13 min · recall 0.92</div></div>
+    <div class="col" data-step="1"><div class="big" style="color:var(--cached)">$0.55</div><div class="stat-label">one agent · 5 min · recall 0.90</div></div>
+    <p class="grow" data-step="2" style="font-size:36px">Our first draft was titled <i>Multi-Agent</i>. The adversarial review said we were selling the wrong result.</p>
+  </div>
+  <div class="clip exhibit" data-step="2" data-clip="clips/uml-eval.mp4" data-optional="1" style="height:330px">
+  </div>
+  <div class="src">Median cost per run at list prices. Recall by researcher A; 95% intervals about ±0.06 per configuration, so the 0.02 gap is not resolved (grades.tex). paper/REVIEW.md, 24 Sep 2026.</div>
+  <aside class="notes">
+    <p>The obvious next idea is more agents: an analyst, a class modeller, an attribute modeller, a reviewer and so on. [click] Six agents cost a dollar seventy-six a run and took thirteen minutes. One agent cost fifty-five cents and took five. Recall: 0.92 against 0.90, a gap well inside the plus or minus 0.06 uncertainty of each estimate.</p>
+    <p>[click] Our first draft was even titled multi-agent. My adversarial-review skill flagged that the paper was selling the wrong result. For management, the lesson is general: measure before you scale. Six agents also means six hand-offs, and every hand-off is a place where context can get lost.</p>
+  </aside>
+</section>
+
+<section class="slide" id="s-app-grader" data-section="C Applications" data-t="75" style="--accent:var(--l-new)">
+  <div class="kicker"><b>In ESD</b> · probability &amp; statistics</div>
+  <h1 class="claim">Every grader, human or AI, scored the generated models <em>0.88 or higher</em>.</h1>
+  <div class="body row" style="gap:56px;align-items:flex-start">
+    <div style="width:900px" data-step="1"><svg id="grader-svg" viewBox="0 0 900 500" width="900" height="500"></svg></div>
+    <div class="col grow" style="gap:26px">
+      <p data-step="2"><b style="color:var(--l-sess)">Recall</b>: how much of the manual it captured. <b style="color:var(--l-sess)">Precision</b>: how much of what it wrote is right.</p>
+      <p data-step="3">The AI graders ran 1 to 8 points more generous than people, so <b>people still set the bar</b>.</p>
+      <div class="quote" data-step="4" style="font-size:28px">“You don't want to be in a position where you're not tasting your food ever again.”<cite>Lauren Tan, 49:34</cite></div>
+    </div>
+  </div>
+  <div class="src">Mean grade per grader, 200 sampled items (grades.tex). A and B are the two researchers. Model graders vs researchers: Gwet's AC2 0.83–0.91, linear weights (agreement.tex).</div>
+  <aside class="notes">
+    <p>Does the output actually work? [click] Two researchers and two AI models graded the same two hundred sampled items. Recall is how much of the manual's content made it into the model; precision is how much of what the model wrote is correct. Every grader, human or AI, put both at 0.88 or higher. Why use both kinds of grader? People are slow and expensive; models are fast and cheap but can drift. Grading with both is how we could check two hundred items and still trust the answer.</p>
+    <p>[click] The definitions matter for reading this. [click] And one remark on the graders themselves: the AI graders were consistently a little more generous than the researchers, by one to eight points, and their agreement with the researchers, chance-corrected, sits between 0.83 and 0.91. Close, but not a replacement.</p>
+    <p>[click] Lauren Tan: you sample the food, but you never stop tasting it. Line an AI grader up against human grades before you trust it, and keep a person on the final call.</p>
+  </aside>
+</section>
+
+
+<section class="slide" id="s-app-writing" data-section="C Applications" data-t="60" style="--accent:var(--l-new)">
+  <div class="kicker"><b>In ESD</b> · writing papers</div>
+  <h1 class="claim">In writing, Claude drafts and checks, and <em>scripts are the receipts</em>.</h1>
+  <div class="body row" style="gap:36px;align-items:flex-start">
+    <div class="col" style="width:820px;gap:14px" data-step="1">
+      <p class="mono small mute">1 · NO NUMBER IS TYPED BY HAND</p>
+      <pre class="term exhibit panel" id="term-tex" style="min-height:140px;font-size:21px"></pre>
+      <p class="mono small mute" style="margin-top:10px">2 · ONE CHECK, RUN BY A SCRIPT</p>
+      <pre class="term exhibit panel illustrative" id="term-code" style="min-height:220px;font-size:19px"></pre>
+    </div>
+    <div class="col grow" style="gap:14px" data-step="3">
+      <p class="mono small mute">3 · RUN BEFORE EVERY SUBMISSION</p>
+      <div class="clip exhibit" data-clip="clips/adversarial-review.mp4" style="height:500px;min-height:0"><pre class="term exhibit" id="term-run" style="font-size:21px"></pre></div>
+    </div>
+  </div>
+  <div class="src">Simplified from my UML-agents paper: main.tex takes every value from numbers.tex (1,126 generated values); the real checker is src/evaluate/check_overleaf.py. Review findings: paper/REVIEW.md, 24 Sep 2026.</div>
+  <aside class="notes">
+    <p>Writing is where I spend most of my hours, and where I first started trusting Claude. That trust comes from receipts. [click] In my paper no number is typed by hand. I write a name, and a script fills in the value from the results, so 0.69 and 0.90 come straight from the data, not from Claude's memory.</p>
+    <p>[click] The check is short: every name used in the paper must have a value from the data, or it fails. [click] I run it before every submission, together with my hostile-review skill, which on this paper found five false claims and three citations that said less than we claimed. I don't read every line the model writes; I read what the checks flag.</p>
+  </aside>
+</section>
+
+
+<section class="slide" id="s-app-notes" data-section="C Applications" data-t="60" style="--accent:var(--l-new)">
+  <div class="kicker"><b>In ESD</b> · context engineering</div>
+  <h1 class="claim">Meeting notes are context you can <em>start collecting tomorrow</em>.</h1>
+  <div class="body"><svg id="notes-svg" class="illustrative" viewBox="0 0 1680 470" width="1680" height="470"></svg></div>
+  <p data-step="4" class="small mute" style="margin-top:-10px">Coming next lecture: apron cameras to a 3D digital twin of the airport stand (computer vision, in progress).</p>
+  <div class="src">Example is synthetic. Pattern from my interview transcripts turned into findings, data needs and actions.</div>
+  <aside class="notes">
+    <p>Something you can start tomorrow. [click] A meeting transcript is long and mostly noise. [click] An agent turns it into what matters: decisions, owners, data needs, deadlines. [click] Saved as a dated log, it becomes outer-loop context. Next month you ask what we decided about the data request, and the agent searches the logs instead of your memory.</p>
+    <p>I did this with interview transcripts for an airport project: each became findings, data needs and actions. Keep decisions, owners and numbers. Drop the small talk.</p>
+    <p>[click] A practical note: transcripts contain other people's words, so ask before you record, and keep the logs where your organisation allows. And a teaser for next time: we are turning apron camera footage into a 3D digital twin of the stand.</p>
+  </aside>
+</section>
+
+<section class="slide" id="s-try" data-section="C Applications" data-t="60" style="--accent:var(--l-new)">
+  <div class="kicker"><b>In ESD</b> · your turn</div>
+  <h1 class="claim">Try it this term, in the courses <em>you already take</em>.</h1>
+  <div class="body row" style="gap:28px;align-items:stretch;flex:none;margin-top:24px">
+    <div class="panel grow col try" data-step="1" style="gap:12px;padding:24px 26px">
+      <p class="mono small" style="color:var(--l-sess)">40.015 SIMULATION</p>
+      <svg id="try-sim" class="illustrative" viewBox="0 0 480 230" width="480" height="230"></svg>
+      <p class="try-ask">Airport queue, live flight data</p>
+      <p class="try-check">burn-in removed, CI width</p>
+    </div>
+    <div class="panel grow col try" data-step="2" style="gap:12px;padding:24px 26px">
+      <p class="mono small" style="color:var(--l-proj)">40.002 OPTIMISATION</p>
+      <svg id="try-lp" class="illustrative" viewBox="0 0 480 230" width="480" height="230"></svg>
+      <p class="try-ask">LP from the problem statement</p>
+      <p class="try-check">duals vs sensitivity analysis</p>
+    </div>
+    <div class="panel grow col try" data-step="3" style="gap:12px;padding:24px 26px">
+      <p class="mono small" style="color:var(--cached)">40.011 DBA</p>
+      <svg id="try-dba" class="illustrative" viewBox="0 0 480 230" width="480" height="230"></svg>
+      <p class="try-ask">Port cargo forecast</p>
+      <p class="try-check">backtest on last year</p>
+    </div>
+  </div>
+  <p data-step="4" style="font-size:36px;font-weight:600;text-align:center;margin:auto 0">The agent does the work. <span style="color:var(--l-new)">You write the check.</span></p>
+  <div class="src">Course topics: SUTD course pages for 40.015, 40.002 and 40.011 (Data and Business Analytics). Animations are illustrative.</div>
+  <aside class="notes">
+    <p>Your turn. Follow each course's AI policy. [click] Simulation: an agent can build the model, an animation like this for your audience, and a live data feed from an API. Make it prove burn-in is removed and report the CI width. [click] Optimisation: let it formulate the LP, then check its duals against your own sensitivity analysis. [click] DBA: forecast cargo growth at a port, or decide who gets the study awards. Hold back last year and see if the forecast would have predicted it.</p>
+    <p>[click] The agent does the work; you write the check. That is where your domain knowledge shows.</p>
+  </aside>
+</section>
+
+
+<section class="slide" id="s-close" data-section="C Applications" data-t="40" style="--accent:var(--cached);padding:0" data-nonum="1">
+  <svg id="close-svg" viewBox="0 0 1920 1080" width="1920" height="1080" style="position:absolute;inset:0"></svg>
+  <div class="qa" id="qa">
+    <p class="qa-sub" id="qa-sub">Let AI carry the load. Keep your legs.</p>
+    <p class="qa-q"><span class="qa-prompt">&gt;</span> <span id="qa-type" class="caret"></span></p>
+  </div>
+  <div class="closefilm" data-src="clips/wall-e.mp4"></div>
+  <aside class="notes">
+    <p>[Click once: the WALL-E clip plays, silent, about 17 seconds. When it ends the screen turns into the questions slide by itself, with a short swell of music. Click again to skip the clip.]</p>
+    <p>[Over the clip:] In WALL-E, people ride hover chairs everywhere, and after a few generations they can no longer walk. AI can carry a lot of our work now, and it should. But if we hand over the understanding too, we end up in the chair.</p>
+    <p>[On the questions slide:] So three habits to keep your legs. Write the check before you write the prompt. Read what the checks flag, every time. And redo your evals when the model changes. That is how I climbed the trust curve without ending up in the chair. Thank you. Questions?</p>
+  </aside>
+</section>

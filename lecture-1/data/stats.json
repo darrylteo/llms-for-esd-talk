@@ -1,0 +1,457 @@
+{
+ "generated": "2026-10-17T19:44:46",
+ "until": "2026-10-16",
+ "date_range": [
+  "2026-08-14",
+  "2026-10-16"
+ ],
+ "active_days": 40,
+ "sessions": {
+  "interactive": 117,
+  "scripted": 275
+ },
+ "totals": {
+  "interactive": {
+   "replies": 9558.0,
+   "input": 59905.0,
+   "output": 9256862.0,
+   "cache_read": 2302987827.0,
+   "cache_write_5m": 3699418.0,
+   "cache_write_1h": 38956223.0,
+   "cost_actual_usd": 1083.8156,
+   "cost_nocache_usd": 8979.7038,
+   "cost_output_usd": 178.1042,
+   "cost_cacheread_usd": 587.7577,
+   "input_all": 2345703373.0,
+   "processed": 2354960235.0,
+   "cache_hit_rate": 0.9818,
+   "saving_factor": 8.29
+  },
+  "all": {
+   "replies": 9863.0,
+   "input": 60515.0,
+   "output": 11700214.0,
+   "cache_read": 2303895615.0,
+   "cache_write_5m": 3699418.0,
+   "cache_write_1h": 43112228.0,
+   "cost_actual_usd": 1143.5467,
+   "cost_nocache_usd": 9028.8731,
+   "cost_output_usd": 211.9537,
+   "cost_cacheread_usd": 588.008,
+   "input_all": 2350767776.0,
+   "processed": 2362467990.0,
+   "cache_hit_rate": 0.9801,
+   "saving_factor": 7.9
+  },
+  "scripted": {
+   "replies": 305.0,
+   "input": 610.0,
+   "output": 2443352.0,
+   "cache_read": 907788.0,
+   "cache_write_5m": 0.0,
+   "cache_write_1h": 4156005.0,
+   "cost_actual_usd": 59.731,
+   "cost_nocache_usd": 49.1693,
+   "cost_output_usd": 33.8495,
+   "cost_cacheread_usd": 0.2503,
+   "input_all": 5064403.0,
+   "processed": 7507755.0,
+   "cache_hit_rate": 0.1792,
+   "saving_factor": 0.82
+  }
+ },
+ "by_model": {
+  "haiku-4-5": {
+   "replies": 44.0,
+   "input": 4332.0,
+   "output": 31688.0,
+   "cache_read": 845190.0,
+   "cache_write_5m": 93266.0,
+   "cache_write_1h": 201096.0,
+   "cost_actual_usd": 0.7661,
+   "cost_nocache_usd": 1.3023,
+   "cost_output_usd": 0.1584,
+   "cost_cacheread_usd": 0.0845,
+   "input_all": 1143884.0,
+   "processed": 1175572.0,
+   "cache_hit_rate": 0.7389,
+   "saving_factor": 1.7
+  },
+  "opus-5": {
+   "replies": 2347.0,
+   "input": 5328.0,
+   "output": 2866477.0,
+   "cache_read": 433746754.0,
+   "cache_write_5m": 504345.0,
+   "cache_write_1h": 12184835.0,
+   "cost_actual_usd": 413.5624,
+   "cost_nocache_usd": 2303.8682,
+   "cost_output_usd": 71.6619,
+   "cost_cacheread_usd": 216.8734,
+   "input_all": 446441262.0,
+   "processed": 449307739.0,
+   "cache_hit_rate": 0.9716,
+   "saving_factor": 5.57
+  },
+  "opus-5-5": {
+   "replies": 4430.0,
+   "input": 8962.0,
+   "output": 5211282.0,
+   "cache_read": 1366451769.0,
+   "cache_write_5m": 873086.0,
+   "cache_write_1h": 21268178.0,
+   "cost_actual_usd": 552.0627,
+   "cost_nocache_usd": 5658.6336,
+   "cost_output_usd": 104.2256,
+   "cost_cacheread_usd": 273.2904,
+   "input_all": 1388601995.0,
+   "processed": 1393813277.0,
+   "cache_hit_rate": 0.984,
+   "saving_factor": 10.25
+  },
+  "sonnet-5": {
+   "replies": 2902.0,
+   "input": 41613.0,
+   "output": 3542148.0,
+   "cache_read": 474745508.0,
+   "cache_write_5m": 1693188.0,
+   "cache_write_1h": 9442349.0,
+   "cost_actual_usd": 172.4562,
+   "cost_nocache_usd": 1007.2668,
+   "cost_output_usd": 35.4215,
+   "cost_cacheread_usd": 94.9491,
+   "input_all": 485922658.0,
+   "processed": 489464806.0,
+   "cache_hit_rate": 0.977,
+   "saving_factor": 5.84
+  },
+  "sonnet-5-5": {
+   "replies": 140.0,
+   "input": 280.0,
+   "output": 48619.0,
+   "cache_read": 28106394.0,
+   "cache_write_5m": 535533.0,
+   "cache_write_1h": 15770.0,
+   "cost_actual_usd": 4.6993,
+   "cost_nocache_usd": 57.8021,
+   "cost_output_usd": 0.4862,
+   "cost_cacheread_usd": 2.8106,
+   "input_all": 28657977.0,
+   "processed": 28706596.0,
+   "cache_hit_rate": 0.9808,
+   "saving_factor": 12.3
+  }
+ },
+ "by_month": {
+  "2026-08": {
+   "replies": 2090.0,
+   "input": 40549.0,
+   "output": 1297795.0,
+   "cache_read": 359387846.0,
+   "cache_write_5m": 928831.0,
+   "cache_write_1h": 5769552.0,
+   "cost_actual_usd": 118.8394,
+   "cost_nocache_usd": 770.6064,
+   "cost_output_usd": 15.0797,
+   "cost_cacheread_usd": 73.9589,
+   "input_all": 366126778.0,
+   "processed": 367424573.0,
+   "cache_hit_rate": 0.9816,
+   "saving_factor": 6.48
+  },
+  "2026-09": {
+   "replies": 4413.0,
+   "input": 9042.0,
+   "output": 6493125.0,
+   "cache_read": 827548557.0,
+   "cache_write_5m": 1897501.0,
+   "cache_write_1h": 21492027.0,
+   "cost_actual_usd": 592.8376,
+   "cost_nocache_usd": 3645.9484,
+   "cost_output_usd": 118.8885,
+   "cost_cacheread_usd": 290.6612,
+   "input_all": 850947127.0,
+   "processed": 857440252.0,
+   "cache_hit_rate": 0.9725,
+   "saving_factor": 6.15
+  },
+  "2026-10": {
+   "replies": 3360.0,
+   "input": 10924.0,
+   "output": 3909294.0,
+   "cache_read": 1116959212.0,
+   "cache_write_5m": 873086.0,
+   "cache_write_1h": 15850649.0,
+   "cost_actual_usd": 431.8697,
+   "cost_nocache_usd": 4612.3183,
+   "cost_output_usd": 77.9855,
+   "cost_cacheread_usd": 223.388,
+   "input_all": 1133693871.0,
+   "processed": 1137603165.0,
+   "cache_hit_rate": 0.9852,
+   "saving_factor": 10.68
+  }
+ },
+ "by_day": {
+  "2026-08-14": {
+   "replies": 485.0,
+   "output": 270722.0
+  },
+  "2026-08-15": {
+   "replies": 468.0,
+   "output": 321439.0
+  },
+  "2026-08-16": {
+   "replies": 263.0,
+   "output": 159986.0
+  },
+  "2026-08-17": {
+   "replies": 4.0,
+   "output": 591.0
+  },
+  "2026-08-19": {
+   "replies": 613.0,
+   "output": 353641.0
+  },
+  "2026-08-20": {
+   "replies": 176.0,
+   "output": 112387.0
+  },
+  "2026-08-21": {
+   "replies": 35.0,
+   "output": 43846.0
+  },
+  "2026-08-28": {
+   "replies": 46.0,
+   "output": 35183.0
+  },
+  "2026-09-10": {
+   "replies": 36.0,
+   "output": 72488.0
+  },
+  "2026-09-11": {
+   "replies": 114.0,
+   "output": 186813.0
+  },
+  "2026-09-12": {
+   "replies": 423.0,
+   "output": 1398627.0
+  },
+  "2026-09-14": {
+   "replies": 199.0,
+   "output": 717253.0
+  },
+  "2026-09-15": {
+   "replies": 78.0,
+   "output": 92497.0
+  },
+  "2026-09-16": {
+   "replies": 254.0,
+   "output": 332166.0
+  },
+  "2026-09-17": {
+   "replies": 110.0,
+   "output": 125544.0
+  },
+  "2026-09-18": {
+   "replies": 228.0,
+   "output": 216136.0
+  },
+  "2026-09-19": {
+   "replies": 282.0,
+   "output": 663650.0
+  },
+  "2026-09-20": {
+   "replies": 101.0,
+   "output": 123048.0
+  },
+  "2026-09-21": {
+   "replies": 708.0,
+   "output": 630513.0
+  },
+  "2026-09-22": {
+   "replies": 412.0,
+   "output": 341077.0
+  },
+  "2026-09-23": {
+   "replies": 464.0,
+   "output": 610155.0
+  },
+  "2026-09-24": {
+   "replies": 239.0,
+   "output": 232417.0
+  },
+  "2026-09-25": {
+   "replies": 438.0,
+   "output": 502758.0
+  },
+  "2026-09-26": {
+   "replies": 41.0,
+   "output": 48094.0
+  },
+  "2026-09-28": {
+   "replies": 10.0,
+   "output": 6901.0
+  },
+  "2026-09-29": {
+   "replies": 276.0,
+   "output": 192988.0
+  },
+  "2026-10-02": {
+   "replies": 114.0,
+   "output": 126734.0
+  },
+  "2026-10-03": {
+   "replies": 24.0,
+   "output": 13291.0
+  },
+  "2026-10-05": {
+   "replies": 145.0,
+   "output": 215153.0
+  },
+  "2026-10-06": {
+   "replies": 84.0,
+   "output": 96189.0
+  },
+  "2026-10-07": {
+   "replies": 18.0,
+   "output": 22670.0
+  },
+  "2026-10-08": {
+   "replies": 274.0,
+   "output": 359829.0
+  },
+  "2026-10-09": {
+   "replies": 1.0,
+   "output": 2124.0
+  },
+  "2026-10-10": {
+   "replies": 431.0,
+   "output": 493700.0
+  },
+  "2026-10-11": {
+   "replies": 246.0,
+   "output": 225115.0
+  },
+  "2026-10-12": {
+   "replies": 786.0,
+   "output": 908325.0
+  },
+  "2026-10-13": {
+   "replies": 416.0,
+   "output": 515520.0
+  },
+  "2026-10-14": {
+   "replies": 156.0,
+   "output": 229619.0
+  },
+  "2026-10-15": {
+   "replies": 466.0,
+   "output": 499217.0
+  },
+  "2026-10-16": {
+   "replies": 199.0,
+   "output": 201808.0
+  }
+ },
+ "tools_top": [
+  [
+   "Bash",
+   5097
+  ],
+  [
+   "Edit",
+   1956
+  ],
+  [
+   "Read",
+   1311
+  ],
+  [
+   "Write",
+   583
+  ],
+  [
+   "WebFetch",
+   407
+  ],
+  [
+   "WebSearch",
+   339
+  ],
+  [
+   "StructuredOutput",
+   281
+  ],
+  [
+   "mcp__Claude_Browser__javascript_tool",
+   244
+  ],
+  [
+   "Grep",
+   217
+  ],
+  [
+   "mcp__Claude_Browser__computer",
+   163
+  ],
+  [
+   "ToolSearch",
+   84
+  ],
+  [
+   "mcp__Claude_Browser__preview_start",
+   79
+  ]
+ ],
+ "tools_total": 11450,
+ "unpriced_models": {},
+ "plan_usage": {
+  "samples": 605,
+  "range": [
+   "2026-09-17",
+   "2026-10-16"
+  ],
+  "weekly_mean_pct": 54.9,
+  "weekly_ge90_samples": 136,
+  "weekly_max_pct": 100,
+  "five_hour_max_pct": 100
+ },
+ "prices_usd_per_mtok": {
+  "opus-5-5": [
+   4.0,
+   5.0,
+   8.0,
+   0.2,
+   20.0
+  ],
+  "opus-5": [
+   5.0,
+   6.25,
+   10.0,
+   0.5,
+   25.0
+  ],
+  "sonnet-5-5": [
+   2.0,
+   2.5,
+   4.0,
+   0.1,
+   10.0
+  ],
+  "sonnet-5": [
+   2.0,
+   2.5,
+   4.0,
+   0.2,
+   10.0
+  ],
+  "haiku-4-5": [
+   1.0,
+   1.25,
+   2.0,
+   0.1,
+   5.0
+  ]
+ }
+}
