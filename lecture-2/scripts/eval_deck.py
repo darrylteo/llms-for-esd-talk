@@ -1,6 +1,6 @@
 """Deck eval for "The Age of LLMs" (faculty talk). Run after build.py and shoot.py.
 
-  T1 section timing within ±10% of plan: teaching 7 min (A+B), how LLMs work 3 min (C), practice 5 min (D)
+  T1 section timing within ±10% of plan: teaching 8 min (A+B, including a 4-min live demo), how LLMs work 2 min (C), practice 5 min (D)
   T2 total within 15 min ± 30 s
   A1 every headline renders in at most 2 lines (headless Chrome, data/shots)
   R1 no script errors, nothing outside the stage, no clipped boxes (headless Chrome)
@@ -25,7 +25,7 @@ SRC = ROOT / "data" / "sources"
 SHOTS = ROOT / "data" / "shots"
 SLIDES = (ROOT / "src" / "slides.html").read_text(encoding="utf-8")
 JS = (ROOT / "src" / "slides.js").read_text(encoding="utf-8")
-PLAN = {"AB": 420, "C": 180, "D": 300}
+PLAN = {"AB": 480, "C": 120, "D": 300}
 
 # quote text (as shown) -> source file and the phrase to find there
 QUOTES = [

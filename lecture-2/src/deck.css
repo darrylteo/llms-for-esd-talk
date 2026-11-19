@@ -134,7 +134,6 @@ body.print #progress, body.print #notes-overlay { display: none; }
 
 /* a build that is replaced by the next one */
 .swap.dimmed { display: none; }
-#term-loop { min-height: 330px; }
 
 /* headless renders (#vNsM): no fades, so screenshots show the settled frame */
 body[data-bare] .slide, body[data-bare] [data-step] { transition: none !important; }
@@ -215,6 +214,8 @@ body[data-bare] .kaggle-hl, body.print .kaggle-hl { animation: none; transition:
 .beamer .bm-foot { display: flex; justify-content: space-between; background: #1f3b6e; color: #cfd8ea; padding: 8px 30px; font: 400 16px var(--f-mono); }
 .shot { border-radius: 14px; overflow: hidden; box-shadow: 0 0 0 1px rgba(120,160,255,.25), 0 20px 80px rgba(60,90,255,.22); height: 520px; }
 .shot img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 100%; }
+.shot { position: relative; }
+.shot video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #05081c; }
 .demo-card { position: absolute; right: 110px; top: 250px; width: 640px; padding: 34px 36px; border-radius: 22px; background: rgba(12,12,16,.96);
   border: 1px solid var(--l-new); box-shadow: 0 30px 120px rgba(0,0,0,.8), 0 0 60px rgba(255,159,10,.18); display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; }
 .demo-card .demo-url { font: 700 29px/1.2 var(--f-mono); color: var(--ink); white-space: nowrap; }

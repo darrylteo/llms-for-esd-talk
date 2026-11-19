@@ -122,6 +122,21 @@
     else if (k === 'b' || k === 'B' || k === '.') { stage.style.visibility = stage.style.visibility === 'hidden' ? '' : 'hidden'; }
   });
   stage.addEventListener('click', e => { if (!e.target.closest('a,button,video')) next(); });
+  // Mouse wheel or trackpad: scroll down = next build, up = previous. One gesture moves one build: a wheel notch or
+  // swipe fires many events (and a trackpad keeps firing while it coasts), so input stays locked until it pauses.
+  let wheelSum = 0, wheelLock = 0;
+  window.addEventListener('wheel', e => {
+    if (e.ctrlKey || document.body.classList.contains('presenter')) return; // ctrl+wheel stays browser zoom
+    if (!overlay.hidden && overlay.contains(e.target)) return;              // the notes strip scrolls normally
+    e.preventDefault();
+    const now = performance.now();
+    if (now < wheelLock) { wheelLock = Math.max(wheelLock, now + 220); return; }
+    const dy = e.deltaMode === 1 ? e.deltaY * 33 : e.deltaMode === 2 ? e.deltaY * 800 : e.deltaY;
+    wheelSum += Math.abs(e.deltaX) > Math.abs(dy) ? e.deltaX : dy;
+    if (Math.abs(wheelSum) < 40) return;
+    (wheelSum > 0 ? next : prev)();
+    wheelSum = 0; wheelLock = now + 500;
+  }, { passive: false });
 
   function openPresenter() {
     let w = null;

@@ -16,7 +16,7 @@ How coding agents are built (the harness), what goes into their context, and how
 
 **[Open lecture 2](https://darrylteo.github.io/llms-for-esd-talk/lecture-2/talk.html)** · 15 minutes · faculty and staff · November 2026 · [lecture-2/](lecture-2/)
 
-[![Lecture 2, slide 9: below the storm, a hook sways in calm water with the three hook events beside it](lecture-2/docs/preview.png)](https://darrylteo.github.io/llms-for-esd-talk/lecture-2/talk.html)
+[![Lecture 2, slide 8: below the storm, a hook sways in calm water with the three hook events beside it](lecture-2/docs/preview.png)](https://darrylteo.github.io/llms-for-esd-talk/lecture-2/talk.html)
 
 A shorter talk for faculty and staff, built from lecture 1's slides. It covers how teaching machine learning changed between 2019 and now, with a live demo of [ML Explainers](https://ml-explainers.sutdpm.workers.dev), how agents work, and three habits: checks, hooks, and keeping personal data (PDPA) out of the prompt. The hook from the PDPA slide, with its tests, is in [lecture-2/handout/](lecture-2/handout/). How to present it: [lecture-2/README.md](lecture-2/README.md).
 

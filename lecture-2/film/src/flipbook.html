@@ -1,23 +1,29 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><title>Flip-book film</title>
 <!-- Slide 1's flip-book, drawn frame by frame for film/flipbook.mp4 (render_flipbook.js calls draw(t)).
-     Same 29 pages and timing as the CSS fallback in src/slides.js (s-open). -->
+     The 29 slides are printed two to a leaf and bound as an open book. Each leaf is turned by its bottom-right corner:
+     the corner peels up first, then a crease sweeps across the page and the paper wraps over a moving cylinder until
+     the leaf lands on the other side (the classic page-curl model). The leaf is a fine WebGL mesh, textured on both
+     sides, lit by its surface normal, with a gloss on the curl, a gutter by the spine and a soft shadow under the curl.
+     Set TURN_FROM = 'left' to turn by the bottom-left corner instead (a right-to-left book).
+     Page images come from the #src pages below: render_flipbook.js screenshots each one and passes them to setTextures().
+     Preview the motion with  flipbook.html?preview  after a render has left the page images in ./frames. -->
 <style>
   html, body { margin: 0; width: 1920px; height: 1080px; background: #000; overflow: hidden; }
-  #book { position: absolute; left: 440px; top: 120px; width: 1040px; height: 780px; perspective: 4200px; }
-  #shadow { position: absolute; inset: 0; border-radius: 6px; box-shadow: 0 30px 80px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.04); background: #fbfbf8; }
-  .page { position: absolute; inset: 0; background: #fbfbf8; border-radius: 6px; transform-origin: 0 50%; backface-visibility: hidden;
-    display: flex; flex-direction: column; overflow: hidden; color: #1d1d1f; font-family: "Latin Modern Roman", "CMU Serif", Georgia, serif; }
+  #src { position: absolute; left: 0; top: 0; width: 1040px; height: 780px; }
+  .page { position: absolute; inset: 0; background: #fbfbf8; display: flex; flex-direction: column; overflow: hidden;
+    color: #1d1d1f; font-family: "Latin Modern Roman", "CMU Serif", Georgia, serif; }
   .pb-bar { background: #1f3b6e; color: #fff; padding: 22px 40px; font-size: 40px; }
   .pb-body { flex: 1; padding: 38px 52px; display: flex; flex-direction: column; gap: 22px; font-size: 30px; line-height: 1.35; }
   .pb-line { height: 14px; border-radius: 7px; background: #c9c9c4; }
   .pb-f { align-self: center; font-style: italic; font-size: 38px; margin-top: 8px; }
   .pb-foot { display: flex; justify-content: space-between; background: #1f3b6e; color: #cfd8ea; padding: 10px 40px; font: 400 20px Consolas, monospace; }
-  .shade { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, rgba(0,0,0,.0) 0%, rgba(0,0,0,.55) 100%); opacity: 0; }
-  .cast { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(90deg, rgba(0,0,0,.35) 0%, rgba(0,0,0,0) 45%); opacity: 0; }
+  canvas { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; display: none; }
 </style></head>
 <body>
-<div id="book"><div id="shadow"></div></div>
+<div id="src"></div>
+<canvas id="bg" width="1920" height="1080"></canvas>
+<canvas id="gl" width="3840" height="2160"></canvas>
 <script>
 const PAGES = [
   ['Bagging and Random Forests', 'title'], ['Outline', 'outline'], ['Bootstrapping'], ['Bootstrapping', 'Var(αX + (1 − α)Y)'], ['Bootstrapping', 'α = (σ<sup>2</sup><sub>Y</sub> − σ<sub>XY</sub>) / (σ<sup>2</sup><sub>X</sub> + σ<sup>2</sup><sub>Y</sub> − 2σ<sub>XY</sub>)'],
@@ -28,11 +34,11 @@ const PAGES = [
     ['Random Forests'], ['Back to R!', 'randomForest(formula, data, ntree, mtry)'], ['Pros and Cons'], ['References']
 ];
 const COURSE = 'The Analytics Edge';
-// seeded like d3.randomLcg(7), so the line lengths match the deck's fallback
+// seeded like d3.randomLcg(7), so the line lengths match the deck's CSS fallback
 function lcg(seed) { const mul = 0x19660D, inc = 0x3C6EF35F, eps = 1 / 0x100000000; let s = (0 <= seed && seed < 1 ? seed / eps : Math.abs(seed)) | 0; return () => (s = mul * s + inc | 0, eps * (s >>> 0)); }
 const rng = lcg(7);
-const book = document.getElementById('book');
-const pages = PAGES.map(([title, extra], i) => {
+const src = document.getElementById('src');
+PAGES.forEach(([title, extra], i) => {
   const p = document.createElement('div'); p.className = 'page'; p.style.zIndex = String(PAGES.length - i);
   let body = '';
   if (extra === 'title') body = '<div style="margin:auto;text-align:center"><div style="font-size:52px;color:#1f3b6e">Bagging and Random Forests</div><div style="font-size:30px;margin-top:22px;color:#555">' + COURSE + ' · 2019</div></div>';
@@ -43,30 +49,182 @@ const pages = PAGES.map(([title, extra], i) => {
     if (extra) body += '<div class="pb-f">' + extra + '</div>';
   }
   p.innerHTML = (extra === 'title' ? '' : '<div class="pb-bar">' + title + '</div>') + '<div class="pb-body">' + body + '</div>' +
-    '<div class="pb-foot"><span>' + COURSE + '</span><span>' + (i + 1) + ' / 29</span></div><div class="shade"></div><div class="cast"></div>';
-  book.appendChild(p);
-  return p;
+    '<div class="pb-foot"><span>' + COURSE + '</span><span>' + (i + 1) + ' / 29</span></div>';
+  src.appendChild(p);
 });
-// timing: book fades in, then each page turns; the gaps shrink as the book speeds up
-const FADE = 0.35, FIRST = 0.6, TURN = 0.55;
-const START = []; { let at = FIRST; for (let i = 0; i < PAGES.length - 1; i++) { START.push(at); at += Math.max(0.075, 0.42 * Math.pow(0.84, i)); } }
+window.PAGE_COUNT = PAGES.length;
+// render_flipbook.js: show one source page at a time to screenshot it
+window.showOnly = i => src.querySelectorAll('.page').forEach((p, k) => { p.style.display = k === i ? 'flex' : 'none'; });
+
+/* ---------- book ---------- */
+const TURN_FROM = 'right';              // the corner the hand lifts: 'right' = bottom-right, an English book (unread pages on the right)
+const M = TURN_FROM === 'left' ? -1 : 1; // which screen side the unread pages lie on
+const CX = 960, CY = 505;               // spine centre; the camera looks straight down at it
+const PW = 790, PH = 592;               // one page on screen (the 1040x780 slide images, scaled)
+const CAM = 2700;                       // camera height: something lifted by z draws CAM/(CAM-z) times larger
+const LEAF = 0.85;                      // thickness of one leaf
+const LEAVES = Math.ceil(PAGES.length / 2);   // 15 leaves: leaf j carries slide 2j+1 on the front, 2j+2 on the back
+const TURNS = LEAVES - 1;               // the last leaf (slide 29) is never turned
+
+/* ---------- timing: the book fades in, then the leaves turn faster and faster ---------- */
+const FADE = 0.35, FIRST = 0.5, TURN = 0.9;
+const START = []; { let at = FIRST; for (let i = 0; i < TURNS; i++) { START.push(at); at += Math.max(0.14, 0.58 * Math.pow(0.86, i)); } }
 window.SCHEDULE = START;
-window.DUR = START[START.length - 1] + TURN + 0.5;
-const ease = k => 0.5 - 0.5 * Math.cos(Math.PI * k);
-window.draw = t => {
-  book.style.opacity = Math.min(1, t / FADE);
-  pages.forEach((p, i) => {
-    const sh = p.querySelector('.shade'), cast = p.querySelector('.cast');
-    if (i === pages.length - 1) { p.style.transform = 'none'; return; }
-    const k = Math.max(0, Math.min(1, (t - START[i]) / TURN));
-    p.style.visibility = k >= 1 ? 'hidden' : 'visible';
-    p.style.transform = 'rotateY(' + (-176 * ease(k)).toFixed(2) + 'deg)';
-    sh.style.opacity = (0.7 * Math.sin(Math.PI * Math.min(k * 1.8, 1) / 2)).toFixed(3);
-    // the page underneath darkens a little while this one passes over it
-    const under = pages[i + 1];
-    if (under) under.querySelector('.cast').style.opacity = k > 0 && k < 1 ? (0.55 * Math.sin(Math.PI * k)).toFixed(3) : '0';
+window.TURN = TURN;
+window.DUR = START[START.length - 1] + TURN + 0.6;
+const ease = k => k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;   // slow peel, quick sweep, soft landing
+
+/* The crease of a leaf at turn progress k, in page coordinates (x from the spine to the free edge, y up from the bottom).
+   Points beyond the crease (p.n > o) wrap around a cylinder of radius r and fold back over the page. At k = 0 the
+   crease touches the free bottom corner, tilted 40 degrees; it straightens and sweeps to the spine while the cylinder
+   swells and shrinks again, so at k = 1 the leaf lies flat on the other side. */
+function crease(k) {
+  if (k <= 0) return { n: [1, 0], o: 1e6, r: 1, flap: 0 };
+  if (k >= 1) return { n: [1, 0], o: 0, r: 0.0001, flap: 0 };
+  const e = ease(k), b = -0.72 * Math.pow(1 - e, 0.85);
+  const n = [Math.cos(b), Math.sin(b)];
+  const r = PW * (0.2 * Math.pow(Math.sin(Math.PI * e), 0.8) + 0.05 * (1 - e));
+  return { n, o: PW * n[0] * (1 - e), r, flap: Math.sin(Math.PI * Math.min(1, k * 1.1)) };
+}
+
+/* ---------- WebGL ---------- */
+const glc = document.getElementById('gl');
+const gl = glc.getContext('webgl2', { antialias: true, alpha: true, premultipliedAlpha: true, preserveDrawingBuffer: true });
+const VS = `#version 300 es
+in vec2 aUV;
+uniform vec2 uSize; uniform vec2 uN; uniform float uO, uR, uLift, uM; uniform vec3 uCam; // cx, cy, camera height
+out vec3 vN; out vec2 vUV; out vec2 vP; out float vD;
+void main() {
+  vec2 p = aUV * uSize;
+  float d = dot(p, uN) - uO, R = max(uR, 0.0001);
+  vec3 P, N;
+  if (d <= 0.0) { P = vec3(p, 0.0); N = vec3(0.0, 0.0, 1.0); }
+  else if (d < 3.14159265 * R) { float t = d / R; P = vec3(p - d * uN + R * sin(t) * uN, R * (1.0 - cos(t))); N = vec3(-sin(t) * uN, cos(t)); }
+  else { P = vec3(p - (2.0 * d - 3.14159265 * R) * uN, 2.0 * R); N = vec3(0.0, 0.0, -1.0); }
+  float z = P.z + uLift, s = uCam.z / (uCam.z - z);
+  float X = uCam.x + uM * P.x * s, Y = uCam.y + (uSize.y * 0.5 - P.y) * s;
+  gl_Position = vec4(X / 960.0 - 1.0, 1.0 - Y / 540.0, -z / 3000.0, 1.0);
+  vN = vec3(uM * N.x, N.y, N.z); vUV = aUV; vP = p; vD = d;
+}`;
+const FS = `#version 300 es
+precision highp float;
+in vec3 vN; in vec2 vUV; in vec2 vP; in float vD;
+uniform sampler2D uFront, uBack; uniform float uHasBack, uM, uR, uFlap;
+uniform vec2 uSize;
+uniform vec4 uShadow;   // the leaf above a resting page: crease normal, offset, radius
+uniform float uShadowAmt;
+out vec4 o;
+void main() {
+  vec3 N = normalize(vN);
+  bool front = N.z >= 0.0;
+  float u = vUV.x;
+  float tx = front ? (uM > 0.0 ? u : 1.0 - u) : (uM > 0.0 ? 1.0 - u : u);
+  vec2 tc = vec2(tx, 1.0 - vUV.y);
+  vec3 c = front ? texture(uFront, tc).rgb : (uHasBack > 0.5 ? texture(uBack, tc).rgb : vec3(0.957, 0.945, 0.91));
+  if (!front) N = -N;
+  vec3 L = normalize(vec3(-0.35, 0.3, 1.0));
+  float flat0 = L.z;
+  float lum = 0.40 + 0.60 * max(dot(N, L), 0.0) / flat0;
+  float spec = pow(max(dot(N, normalize(L + vec3(0.0, 0.0, 1.0))), 0.0), 60.0) * 0.10 * (1.0 - N.z);
+  float s = vP.x;                                     // distance from the spine
+  lum *= 1.0 - 0.38 * exp(-s / 22.0) - 0.10 * exp(-s / 110.0);
+  if (vD < 0.0 && uFlap > 0.0) lum *= 1.0 - 0.32 * uFlap * exp(vD / (0.9 * max(uR, 1.0)));   // under its own folded flap
+  if (uShadowAmt > 0.0) {                            // the revealed page under a leaf that is curling away
+    float ds = dot(vP, uShadow.xy) - uShadow.z;
+    if (ds > 0.0) lum *= 1.0 - 0.45 * uShadowAmt * exp(-ds / (1.3 * max(uShadow.w, 1.0)));
+  }
+  float edge = min(min(s, uSize.x - s), min(vP.y, uSize.y - vP.y));
+  lum *= mix(0.8, 1.0, smoothstep(0.0, 2.0, edge));
+  o = vec4(c * min(lum, 1.12) + spec, 1.0);
+}`;
+function shader(type, srcText) { const s = gl.createShader(type); gl.shaderSource(s, srcText); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s)); return s; }
+const prog = gl.createProgram();
+gl.attachShader(prog, shader(gl.VERTEX_SHADER, VS)); gl.attachShader(prog, shader(gl.FRAGMENT_SHADER, FS)); gl.linkProgram(prog);
+if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
+gl.useProgram(prog);
+const U = {}; ['uSize', 'uN', 'uO', 'uR', 'uLift', 'uM', 'uCam', 'uFront', 'uBack', 'uHasBack', 'uFlap', 'uShadow', 'uShadowAmt']
+  .forEach(n => U[n] = gl.getUniformLocation(prog, n));
+// the leaf mesh: a fine grid, two triangles per cell
+const GX = 200, GY = 150, uv = [], idx = [];
+for (let j = 0; j <= GY; j++) for (let i = 0; i <= GX; i++) uv.push(i / GX, j / GY);
+for (let j = 0; j < GY; j++) for (let i = 0; i < GX; i++) { const a = j * (GX + 1) + i, b = a + 1, c = a + GX + 1, d = c + 1; idx.push(a, b, d, a, d, c); }
+const vao = gl.createVertexArray(); gl.bindVertexArray(vao);
+const vb = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, vb); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(uv), gl.STATIC_DRAW);
+const loc = gl.getAttribLocation(prog, 'aUV'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+const ib = gl.createBuffer(); gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ib); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(idx), gl.STATIC_DRAW);
+gl.uniform2f(U.uSize, PW, PH); gl.uniform1f(U.uM, M); gl.uniform3f(U.uCam, CX, CY, CAM);
+gl.uniform1i(U.uFront, 0); gl.uniform1i(U.uBack, 1);
+gl.enable(gl.DEPTH_TEST); gl.depthFunc(gl.LEQUAL);
+
+function texture(source) {
+  const t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
+  gl.generateMipmap(gl.TEXTURE_2D);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  const ext = gl.getExtension('EXT_texture_filter_anisotropic'); if (ext) gl.texParameterf(gl.TEXTURE_2D, ext.TEXTURE_MAX_ANISOTROPY_EXT, 8);
+  return t;
+}
+let TEX = null, ENDPAPER = null;
+window.setTextures = urls => Promise.all(urls.map(u => new Promise(res => { const im = new Image(); im.onload = () => res(im); im.src = u; })))
+  .then(ims => {
+    TEX = ims.map(texture);
+    const ep = document.createElement('canvas'); ep.width = 64; ep.height = 48; const c = ep.getContext('2d'); c.fillStyle = '#efe7d6'; c.fillRect(0, 0, 64, 48);
+    ENDPAPER = texture(ep);
+    src.style.display = 'none'; glc.style.display = 'block'; bgc.style.display = 'block';
   });
-};
-window.draw(0);
+
+function leaf(k, front, back, lift, shadowFrom) {
+  const c = crease(k);
+  gl.uniform2f(U.uN, c.n[0], c.n[1]); gl.uniform1f(U.uO, c.o); gl.uniform1f(U.uR, c.r); gl.uniform1f(U.uLift, lift); gl.uniform1f(U.uFlap, c.flap);
+  if (shadowFrom != null) { const s = crease(shadowFrom); gl.uniform4f(U.uShadow, s.n[0], s.n[1], s.o, s.r); gl.uniform1f(U.uShadowAmt, Math.sin(Math.PI * shadowFrom)); }
+  else gl.uniform1f(U.uShadowAmt, 0);
+  gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, front);
+  gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, back || front);
+  gl.uniform1f(U.uHasBack, back ? 1 : 0);
+  gl.drawElements(gl.TRIANGLES, idx.length, gl.UNSIGNED_INT, 0);
+}
+
+/* ---------- the cover, table shadow and page blocks (2D, behind the pages) ---------- */
+const bgc = document.getElementById('bg'), g = bgc.getContext('2d');
+function pageBlock(side, n) {            // the edges of the leaves under the top page, on screen side -1 (left) or 1 (right)
+  for (let i = n; i >= 1; i--) {
+    const o = i * LEAF;
+    g.fillStyle = i % 3 === 0 ? '#d9d3c6' : '#ece7dc';
+    g.fillRect(side > 0 ? CX : CX - PW - o, CY - PH / 2 + o * 0.35, PW + o, PH + o * 0.6);
+  }
+}
+
+function frame(t) {
+  const alpha = Math.min(1, t / FADE);
+  const ks = START.map(s0 => Math.max(0, Math.min(1, (t - s0) / TURN)));
+  const landed = ks.filter(k => k >= 1).length, waiting = ks.filter(k => k <= 0).length + 1;  // + the last leaf
+  // 2D: table shadow, hard cover, page blocks
+  g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 1; g.fillStyle = '#000'; g.fillRect(0, 0, 1920, 1080);
+  g.globalAlpha = alpha;
+  g.save(); g.filter = 'blur(28px)'; g.fillStyle = 'rgba(0,0,0,.9)'; g.fillRect(CX - PW - 40, CY - PH / 2 + 10, 2 * PW + 80, PH + 70); g.restore();
+  g.fillStyle = '#16264a'; g.beginPath(); g.roundRect(CX - PW - 26, CY - PH / 2 - 18, 2 * PW + 52, PH + 44, 10); g.fill();
+  g.fillStyle = '#0e1a35'; g.fillRect(CX - 10, CY - PH / 2 - 18, 20, PH + 44);
+  pageBlock(M, Math.max(0, waiting - 1));
+  pageBlock(-M, Math.max(0, landed - 1));
+  // WebGL: resting pages, then the leaves in the air
+  glc.style.opacity = alpha;
+  gl.viewport(0, 0, glc.width, glc.height); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  const flying = ks.map((k, j) => ({ k, j })).filter(o => o.k > 0 && o.k < 1);
+  const topR = TURNS - waiting + 1;               // first leaf still waiting
+  const above = flying.length ? Math.min(...flying.map(o => o.k)) : null;   // the leaf lying just above it
+  leaf(0, TEX[2 * topR], TEX[2 * topR + 1], waiting * LEAF, above);
+  if (landed > 0) leaf(1, TEX[2 * (landed - 1)], TEX[2 * (landed - 1) + 1], landed * LEAF, null);
+  else leaf(1, ENDPAPER, ENDPAPER, 0, null);
+  flying.forEach(({ k, j }) => leaf(k, TEX[2 * j], TEX[2 * j + 1], (waiting + 1) * LEAF + (TURNS - j) * 0.6, null));
+}
+window.draw = t => { if (TEX) frame(t); };
+
+// ?preview plays the motion in real time, using the page images a render left in ./frames
+if (location.search.includes('preview')) {
+  const urls = PAGES.map((_, i) => 'frames/page' + String(i).padStart(2, '0') + '.png');
+  window.setTextures(urls).then(() => { const t0 = performance.now(); const tick = () => { draw(((performance.now() - t0) / 1000) % (window.DUR + 1)); requestAnimationFrame(tick); }; tick(); });
+}
 </script>
 </body></html>

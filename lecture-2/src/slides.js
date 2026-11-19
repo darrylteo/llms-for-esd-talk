@@ -233,77 +233,6 @@
     leave() { stop('era'); }
   };
 
-  /* ---------- s-loop · Agent loop ---------- */
-  C['s-loop'] = {
-    steps: 3,
-    enter() {
-      stop('loop');
-      const s = clear('loop-svg');
-      const A = arrows(s, 9);
-      const node = (x, y, t, sub, c) => {
-        const g = s.append('g').attr('transform', `translate(${x},${y})`);
-        g.append('rect').attr('x', -150).attr('y', -60).attr('width', 300).attr('height', 120).attr('rx', 24).attr('fill', COL.surf).attr('stroke', c).attr('stroke-width', 3);
-        text(g, 0, -4, t, '', 'middle').style('font', '700 38px var(--f-display)');
-        text(g, 0, 34, sub, 'lbl', 'middle');
-        return g;
-      };
-      node(380, 110, 'Model', 'decides next step', COL.sys);
-      this.tool = node(380, 490, 'Tools', 'shell · files · web', COL.neu).attr('opacity', 0);
-      this.a1 = s.append('path').attr('d', 'M560,140 C700,200 700,400 560,460').attr('fill', 'none').attr('stroke', COL.neu).attr('stroke-width', 4).attr('marker-end', A('neu')).attr('opacity', 0);
-      this.a2 = s.append('path').attr('d', 'M200,460 C60,400 60,200 200,140').attr('fill', 'none').attr('stroke', COL.ok).attr('stroke-width', 4).attr('marker-end', A('ok')).attr('opacity', 0);
-      this.l1 = text(s, 630, 300, 'tool call', 'lbl', 'end').attr('opacity', 0);
-      this.l2 = text(s, 130, 300, 'result added', 'lbl', 'start').attr('opacity', 0);
-      this.done = text(s, 380, 590, 'until the model says: done', 'lbl', 'middle').attr('opacity', 0);
-      this.dot = s.append('circle').attr('r', 12).attr('fill', COL.ink).attr('opacity', 0);
-      const ts = clear('tools-svg');
-      this.ts = ts;
-    },
-    spin() {
-      const path = d3.path();
-      const p1 = this.a1.node(), p2 = this.a2.node();
-      const L1 = p1.getTotalLength(), L2 = p2.getTotalLength();
-      const run = () => {
-        this.dot.attr('opacity', 1).transition().duration(1300).ease(d3.easeLinear)
-          .attrTween('transform', () => t => { const p = p1.getPointAtLength(t * L1); return `translate(${p.x},${p.y})`; })
-          .transition().duration(1300).ease(d3.easeLinear)
-          .attrTween('transform', () => t => { const p = p2.getPointAtLength(t * L2); return `translate(${p.x},${p.y})`; })
-          .on('end', run);
-      };
-      if (!reduce) run();
-    },
-    step(slide, n, instant) {
-      typeLines(document.getElementById('term-loop'), LOOP_LINES, n === 2, instant, 'loopterm', 380, 300);
-      fade(this.tool, n >= 1, 400, instant); fade(this.a1, n >= 1, 400, instant); fade(this.l1, n >= 1, 400, instant);
-      fade(this.a2, n >= 2, 400, instant); fade(this.l2, n >= 2, 400, instant); fade(this.done, n >= 2, 400, instant);
-      if (n >= 2 && !this.spinning && !document.body.dataset.bare) { this.spinning = true; this.spin(); }
-      if (n < 2) { this.spinning = false; this.dot.interrupt().attr('opacity', 0); }
-      if (n >= 3 && !this.ts.selectAll('rect').size()) {
-        const data = (S.tools_top || []).slice(0, 6);
-        const y = d3.scaleBand().domain(data.map(d => d[0])).range([0, 390]).padding(.25);
-        const x = d3.scaleLinear().domain([0, d3.max(data, d => d[1]) || 1]).range([0, 560]);
-        const g = this.ts.selectAll('g').data(data).enter().append('g').attr('transform', d => `translate(0,${y(d[0])})`);
-        g.append('text').attr('class', 'lbl-ink').attr('x', 190).attr('y', y.bandwidth() / 2).attr('dy', '.35em').attr('text-anchor', 'end').text(d => d[0]);
-        g.append('rect').attr('x', 210).attr('height', y.bandwidth()).attr('rx', 6).attr('fill', (d, i) => i ? COL.conv : COL.neu).attr('width', 0)
-          .transition().delay((d, i) => D(i * 90, instant)).duration(D(700, instant)).attr('width', d => x(d[1]));
-        g.append('text').attr('class', 'lbl').attr('y', y.bandwidth() / 2).attr('dy', '.35em').attr('x', d => 222 + x(d[1])).text(d => fmt(d[1]));
-        text(this.ts, 0, 428, fmt(S.tools_total || 0) + ' tool calls in total', 'lbl');
-      }
-      if (n < 3) this.ts.selectAll('*').remove();
-    },
-    leave() { if (this.dot) this.dot.interrupt(); this.spinning = false; }
-  };
-
-  /* Real steps from building the random forest explainer (17 Nov, 19:20-19:35, session 6adec69d). */
-  const LOOP_LINES = [
-    ['p', '> make html animation for random forest: ...'],
-    ['d', 'Write     random_forest.html'],
-    ['d', 'Browser   open it, take a screenshot'],
-    ['d', 'Browser   click: draw sample, split, auto-finish'],
-    ['d', 'Edit      fix 4 things it saw'],
-    ['d', 'Browser   reload, run the whole flow'],
-    ['p', '          done, 15 min after the prompt']
-  ];
-
   /* ---------- s-firstmate · Nautical crew (Kun Chen's first mate) ----------
      A night sea that never stops moving. Every boat rides the swell of its own depth row and rolls with its slope.
      The flagship borrows a pirate captain's palette (crimson sails, gold trim, black jolly roger). */
@@ -858,6 +787,30 @@
       typeLines(document.getElementById('term-rf'), RF_LINES, n >= 2, instant, 'krf', 260, 200);
       typeLines(document.getElementById('term-lasso'), LASSO_LINES, n >= 3, instant, 'klasso', 260, 200);
     }
+  };
+
+  /* ---------- s-then-now · the 2026 panel loops the recorded forest (1 tree, 500 trees, the plinko vote) ----------
+     The screenshot stays underneath as the fallback when clips/rf-forest.mp4 is missing. */
+  C['s-then-now'] = {
+    enter(slide) {
+      const box = slide.querySelector('.shot');
+      if (box && !box.dataset.probed) {
+        box.dataset.probed = '1';
+        const v = document.createElement('video');
+        v.muted = true; v.loop = true; v.playsInline = true; v.preload = 'auto'; v.src = 'clips/rf-forest.mp4';
+        v.setAttribute('aria-label', 'Recording of Random Forest by Hand: one tree, then 500, then a new student dropped through the forest');
+        v.addEventListener('loadeddata', () => { box.appendChild(v); box.classList.add('has-video'); this.play(slide); });
+      }
+    },
+    step(slide) { this.play(slide); },
+    play(slide) {
+      const v = slide.querySelector('.shot video');
+      if (!v) return;
+      const on = slide.classList.contains('active') && slide.querySelector('.shot').closest('[data-step]').classList.contains('on');
+      if (on && v.paused) { const p = v.play(); if (p && p.catch) p.catch(() => { }); }
+      else if (!on) { v.pause(); v.currentTime = 0; }
+    },
+    leave(slide) { const v = slide.querySelector('.shot video'); if (v) { v.pause(); v.currentTime = 0; } }
   };
 
   /* ---------- s-recipe · the evening on a timeline: 7 messages, 6 commits ---------- */

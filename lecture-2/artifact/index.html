@@ -174,7 +174,6 @@ body.print #progress, body.print #notes-overlay { display: none; }
 
 /* a build that is replaced by the next one */
 .swap.dimmed { display: none; }
-#term-loop { min-height: 330px; }
 
 /* headless renders (#vNsM): no fades, so screenshots show the settled frame */
 body[data-bare] .slide, body[data-bare] [data-step] { transition: none !important; }
@@ -255,6 +254,8 @@ body[data-bare] .kaggle-hl, body.print .kaggle-hl { animation: none; transition:
 .beamer .bm-foot { display: flex; justify-content: space-between; background: #1f3b6e; color: #cfd8ea; padding: 8px 30px; font: 400 16px var(--f-mono); }
 .shot { border-radius: 14px; overflow: hidden; box-shadow: 0 0 0 1px rgba(120,160,255,.25), 0 20px 80px rgba(60,90,255,.22); height: 520px; }
 .shot img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 100%; }
+.shot { position: relative; }
+.shot video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #05081c; }
 .demo-card { position: absolute; right: 110px; top: 250px; width: 640px; padding: 34px 36px; border-radius: 22px; background: rgba(12,12,16,.96);
   border: 1px solid var(--l-new); box-shadow: 0 30px 120px rgba(0,0,0,.8), 0 0 60px rgba(255,159,10,.18); display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; }
 .demo-card .demo-url { font: 700 29px/1.2 var(--f-mono); color: var(--ink); white-space: nowrap; }
@@ -320,7 +321,7 @@ body[data-bare] .kaggle-hl, body.print .kaggle-hl { animation: none; transition:
   </aside>
 </section>
 
-<section class="slide" id="s-then-now" data-section="B Teaching" data-t="225" style="--accent:var(--l-new)">
+<section class="slide" id="s-then-now" data-section="B Teaching" data-t="285" style="--accent:var(--l-new)">
   <div class="kicker"><b>This term</b> · 42.510 Statistical Learning</div>
   <h1 class="claim">In 2019 we read about 500 trees. This term, students <em>grew them</em>.</h1>
   <div class="body row" style="gap:40px;align-items:stretch">
@@ -353,11 +354,11 @@ body[data-bare] .kaggle-hl, body.print .kaggle-hl { animation: none; transition:
     <img src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMzMwIiBoZWlnaHQ9IjMzMCIgY2xhc3M9InNlZ25vIj48ZyB0cmFuc2Zvcm09InNjYWxlKDEwKSI+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTAgMGgzM3YzM2gtMzN6Ii8+PHBhdGggY2xhc3M9InFybGluZSIgc3Ryb2tlPSIjMDAwIiBkPSJNMiAyLjVoN20xIDBoMm0yIDBoMm01IDBoMm0xIDBoN20tMjkgMWgxbTUgMGgxbTEgMGgxbTMgMGgybTIgMGgxbTMgMGgxbTEgMGgxbTUgMGgxbS0yOSAxaDFtMSAwaDNtMSAwaDFtMiAwaDFtMSAwaDFtMSAwaDFtMSAwaDJtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDNtMSAwaDFtLTI5IDFoMW0xIDBoM20xIDBoMW0xIDBoMW00IDBoNW0xIDBoMW0yIDBoMW0xIDBoM20xIDBoMW0tMjkgMWgxbTEgMGgzbTEgMGgxbTIgMGgxbTEgMGgxbTIgMGg3bTEgMGgxbTEgMGgzbTEgMGgxbS0yOSAxaDFtNSAwaDFtNCAwaDRtMSAwaDFtMSAwaDNtMSAwaDFtNSAwaDFtLTI5IDFoN20xIDBoMW0xIDBoMW0xIDBoMW0xIDBoMW0xIDBoMW0xIDBoMW0xIDBoMW0xIDBoN20tMjEgMWgxbTEgMGgxbTMgMGgybTEgMGg0bS0yMSAxaDFtMSAwaDJtMSAwaDNtMSAwaDFtMSAwaDJtMSAwaDFtMiAwaDRtMSAwaDFtMiAwaDFtMSAwaDJtLTI5IDFoNW0yIDBoMW0xIDBoMm01IDBoMW0yIDBoMm0xIDBoM20zIDBoMW0tMjcgMWgzbTEgMGgzbTEgMGgxbTEgMGgxbTMgMGgzbTEgMGgxbTEgMGgxbTMgMGgybS0yNiAxaDFtMSAwaDJtMSAwaDFtMiAwaDVtNyAwaDJtNCAwaDFtLTI4IDFoMW0xIDBoNG0yIDBoMm0yIDBoM20xIDBoMW0yIDBoMW00IDBoMm0tMjYgMWgxbTMgMGgxbTEgMGgxbTEgMGgxbTUgMGgzbTEgMGgxbTEgMGgybTMgMGgzbS0yOSAxaDJtNCAwaDFtNyAwaDFtMyAwaDNtMSAwaDJtMiAwaDNtLTI4IDFoMm0xIDBoMW0zIDBoMm0yIDBoMW01IDBoMW0xIDBoMm0xIDBoMW0zIDBoMW0tMjggMWgxbTUgMGgxbTMgMGgybTIgMGgybTIgMGgxbTEgMGgybTEgMGgzbTEgMGgxbS0yNyAxaDFtMyAwaDFtMSAwaDFtMiAwaDRtMSAwaDFtMiAwaDFtMSAwaDFtNCAwaDNtLTI4IDFoMW0xIDBoMW0zIDBoMm0xIDBoMW0xIDBoMW0zIDBoMW0yIDBoMW0zIDBoMW0xIDBoMW0xIDBoMW0tMjUgMWgxbTIgMGgxbTUgMGgybTEgMGgybTEgMGgxbTEgMGgxbTQgMGgxbTEgMGgxbS0yNiAxaDRtMSAwaDNtMSAwaDFtMiAwaDFtMyAwaDJtMSAwaDdtLTE5IDFoMm0zIDBoMW0yIDBoM20xIDBoMW0zIDBoNW0tMjkgMWg3bTEgMGgybTIgMGgybTIgMGg1bTEgMGgxbTEgMGgybTEgMGgxbS0yOCAxaDFtNSAwaDFtMSAwaDFtMiAwaDFtMyAwaDFtMiAwaDFtMSAwaDFtMyAwaDJtMiAwaDFtLTI5IDFoMW0xIDBoM20xIDBoMW0yIDBoMW0yIDBoMW0xIDBoMW0yIDBoMm0xIDBoNW0xIDBoM20tMjkgMWgxbTEgMGgzbTEgMGgxbTEgMGgzbTMgMGgzbTIgMGgzbTEgMGgzbTIgMGgxbS0yOSAxaDFtMSAwaDNtMSAwaDFtMSAwaDFtMSAwaDFtMSAwaDFtNCAwaDRtMiAwaDFtMiAwaDFtMSAwaDFtLTI5IDFoMW01IDBoMW03IDBoMW0xIDBoMW0xIDBoMW0xIDBoMm0xIDBoM20xIDBoMW0tMjggMWg3bTEgMGgzbTEgMGgxbTMgMGgxbTEgMGg0bTIgMGgxbTIgMGgxIi8+PC9nPjwvc3ZnPg0K" alt="QR code for the explainers site" width="220" height="220">
     <p class="small mute">Try it on your phone.</p>
   </div>
-  <div class="src">2019 slide redrawn in plain beamer style from the algorithm steps (James et al., ISLR ch. 8.2); not an original course slide. Screenshot: Random Forest by Hand, ml-explainers.</div>
+  <div class="src">2019 slide redrawn in plain beamer style from the algorithm steps (James et al., ISLR ch. 8.2); not an original course slide. Recording: Random Forest by Hand, ml-explainers.</div>
   <aside class="notes">
     <p>[click] In 2019, this is how we met random forests: a well-made slide with three steps and a formula, and a lot of reading.</p>
     <p>[click] This term I TA'd 42.510, three cohorts of about twenty to twenty-five students. Instead of reading the three steps, they did them.</p>
-    <p>[click] Let me show you. [Switch to the browser tab: ml-explainers.sutdpm.workers.dev. About 3 minutes.]</p>
+    <p>[click] Let me show you. [Switch to the browser tab: ml-explainers.sutdpm.workers.dev. About 4 minutes.]</p>
     <p>[DEMO, Random Forest by Hand: 1. Draw Tree 1's sample: point out the repeated rows and the out-of-bag rows. 2. Plant Tree 1, click the root, compare the two random features and their Gini drop, pick one. 3. Auto-finish. 4. Grow the forest: tree 1 is yours, 499 more follow the same recipe. 5. Predict: Randomize, Drop it. Let the plinko run; the vote is the mode. If time: open XGBoost and show the outlier's residual going to zero.]</p>
     <p>[Back to the deck.] The feedback was simple: "easy to understand". A few students whispered that these weeks had very good presentations. That's what I wanted.</p>
   </aside>
@@ -390,30 +391,8 @@ body[data-bare] .kaggle-hl, body.print .kaggle-hl { animation: none; transition:
 </section>
 
 <!-- ===================== C. HOW LLMS WORK (3:00) ===================== -->
-<section class="slide" id="s-loop" data-section="C LLMs" data-t="60">
-  <div class="kicker"><b>How it works</b> · the harness</div>
-  <h1 class="claim">An agent is just a model <em>calling tools in a loop</em>.</h1>
-  <p class="small mute" style="margin-top:-14px">The <b style="color:var(--ink)">harness</b> is the program around the model, such as Claude Code, that runs the tools for it.</p>
-  <div class="body row" style="align-items:center;gap:60px">
-    <div style="width:760px"><svg id="loop-svg" viewBox="0 0 760 600" width="760" height="600"></svg></div>
-    <div class="col grow swap" data-step="2" data-until="2">
-      <p class="mono small mute">A REAL LOOP · THE FIRST 15 MINUTES OF THE EXPLAINER</p>
-      <pre class="term exhibit panel" id="term-loop"></pre>
-    </div>
-    <div class="col grow" data-step="3" style="position:absolute;right:0;top:0;bottom:0;justify-content:center">
-      <p class="mono small mute">MY TOOL CALLS, 9 WEEKS</p>
-      <svg id="tools-svg" viewBox="0 0 860 440" width="860" height="440"></svg>
-    </div>
-  </div>
-  <div class="src">Loop: my Claude Code session for the random forest explainer, 17 Nov 2026, 19:20–19:35. Tool counts: my local Claude Code logs, 14 Aug – 16 Oct 2026. Loop after L. Robinson, CS146S (13:38).</div>
-  <aside class="notes">
-    <p>So what did Claude actually do in those fifteen minutes? It ran a loop. [click] The model decides to call a tool: write a file, open a browser, click a button. [click] The result comes back into its context and it decides the next step, until it decides it is done. On the right are the real steps: it wrote the page, opened it in a browser, clicked through it like a student, fixed four things, and ran it again.</p>
-    <p>The model never touches your computer. The harness does, on its behalf. [click] Across nine weeks I made over eleven thousand tool calls, mostly ordinary shell commands. It is ordinary computer work, done very fast.</p>
-  </aside>
-</section>
-
 <section class="slide" id="s-eras" data-section="C LLMs" data-t="60">
-  <div class="kicker"><b>How it works</b> · the harness</div>
+  <div class="kicker"><b>How it works</b> · four eras</div>
   <h1 class="claim">In two years we went from copy-pasting answers to <em>agents that work while we sleep</em>.</h1>
   <div class="body col" style="gap:26px">
     <div class="row" style="gap:24px">
@@ -790,77 +769,6 @@ body[data-bare] .kaggle-hl, body.print .kaggle-hl { animation: none; transition:
     },
     leave() { stop('era'); }
   };
-
-  /* ---------- s-loop · Agent loop ---------- */
-  C['s-loop'] = {
-    steps: 3,
-    enter() {
-      stop('loop');
-      const s = clear('loop-svg');
-      const A = arrows(s, 9);
-      const node = (x, y, t, sub, c) => {
-        const g = s.append('g').attr('transform', `translate(${x},${y})`);
-        g.append('rect').attr('x', -150).attr('y', -60).attr('width', 300).attr('height', 120).attr('rx', 24).attr('fill', COL.surf).attr('stroke', c).attr('stroke-width', 3);
-        text(g, 0, -4, t, '', 'middle').style('font', '700 38px var(--f-display)');
-        text(g, 0, 34, sub, 'lbl', 'middle');
-        return g;
-      };
-      node(380, 110, 'Model', 'decides next step', COL.sys);
-      this.tool = node(380, 490, 'Tools', 'shell · files · web', COL.neu).attr('opacity', 0);
-      this.a1 = s.append('path').attr('d', 'M560,140 C700,200 700,400 560,460').attr('fill', 'none').attr('stroke', COL.neu).attr('stroke-width', 4).attr('marker-end', A('neu')).attr('opacity', 0);
-      this.a2 = s.append('path').attr('d', 'M200,460 C60,400 60,200 200,140').attr('fill', 'none').attr('stroke', COL.ok).attr('stroke-width', 4).attr('marker-end', A('ok')).attr('opacity', 0);
-      this.l1 = text(s, 630, 300, 'tool call', 'lbl', 'end').attr('opacity', 0);
-      this.l2 = text(s, 130, 300, 'result added', 'lbl', 'start').attr('opacity', 0);
-      this.done = text(s, 380, 590, 'until the model says: done', 'lbl', 'middle').attr('opacity', 0);
-      this.dot = s.append('circle').attr('r', 12).attr('fill', COL.ink).attr('opacity', 0);
-      const ts = clear('tools-svg');
-      this.ts = ts;
-    },
-    spin() {
-      const path = d3.path();
-      const p1 = this.a1.node(), p2 = this.a2.node();
-      const L1 = p1.getTotalLength(), L2 = p2.getTotalLength();
-      const run = () => {
-        this.dot.attr('opacity', 1).transition().duration(1300).ease(d3.easeLinear)
-          .attrTween('transform', () => t => { const p = p1.getPointAtLength(t * L1); return `translate(${p.x},${p.y})`; })
-          .transition().duration(1300).ease(d3.easeLinear)
-          .attrTween('transform', () => t => { const p = p2.getPointAtLength(t * L2); return `translate(${p.x},${p.y})`; })
-          .on('end', run);
-      };
-      if (!reduce) run();
-    },
-    step(slide, n, instant) {
-      typeLines(document.getElementById('term-loop'), LOOP_LINES, n === 2, instant, 'loopterm', 380, 300);
-      fade(this.tool, n >= 1, 400, instant); fade(this.a1, n >= 1, 400, instant); fade(this.l1, n >= 1, 400, instant);
-      fade(this.a2, n >= 2, 400, instant); fade(this.l2, n >= 2, 400, instant); fade(this.done, n >= 2, 400, instant);
-      if (n >= 2 && !this.spinning && !document.body.dataset.bare) { this.spinning = true; this.spin(); }
-      if (n < 2) { this.spinning = false; this.dot.interrupt().attr('opacity', 0); }
-      if (n >= 3 && !this.ts.selectAll('rect').size()) {
-        const data = (S.tools_top || []).slice(0, 6);
-        const y = d3.scaleBand().domain(data.map(d => d[0])).range([0, 390]).padding(.25);
-        const x = d3.scaleLinear().domain([0, d3.max(data, d => d[1]) || 1]).range([0, 560]);
-        const g = this.ts.selectAll('g').data(data).enter().append('g').attr('transform', d => `translate(0,${y(d[0])})`);
-        g.append('text').attr('class', 'lbl-ink').attr('x', 190).attr('y', y.bandwidth() / 2).attr('dy', '.35em').attr('text-anchor', 'end').text(d => d[0]);
-        g.append('rect').attr('x', 210).attr('height', y.bandwidth()).attr('rx', 6).attr('fill', (d, i) => i ? COL.conv : COL.neu).attr('width', 0)
-          .transition().delay((d, i) => D(i * 90, instant)).duration(D(700, instant)).attr('width', d => x(d[1]));
-        g.append('text').attr('class', 'lbl').attr('y', y.bandwidth() / 2).attr('dy', '.35em').attr('x', d => 222 + x(d[1])).text(d => fmt(d[1]));
-        text(this.ts, 0, 428, fmt(S.tools_total || 0) + ' tool calls in total', 'lbl');
-      }
-      if (n < 3) this.ts.selectAll('*').remove();
-    },
-    leave() { if (this.dot) this.dot.interrupt(); this.spinning = false; }
-  };
-
-  /* Real steps from building the random forest explainer (17 Nov, 19:20-19:35, session 6adec69d). */
-  const LOOP_LINES = [
-    ['p', '> make html animation for random forest: ...'],
-    ['d', 'Write     random_forest.html'],
-    ['d', 'Browser   open it, take a screenshot'],
-    ['d', 'Browser   click: draw sample, split, auto-finish'],
-    ['d', 'Edit      fix 4 things it saw'],
-    ['d', 'Browser   reload, run the whole flow'],
-    ['p', '          done, 15 min after the prompt']
-  ];
 
   /* ---------- s-firstmate · Nautical crew (Kun Chen's first mate) ----------
      A night sea that never stops moving. Every boat rides the swell of its own depth row and rolls with its slope.
@@ -1416,6 +1324,30 @@ body[data-bare] .kaggle-hl, body.print .kaggle-hl { animation: none; transition:
       typeLines(document.getElementById('term-rf'), RF_LINES, n >= 2, instant, 'krf', 260, 200);
       typeLines(document.getElementById('term-lasso'), LASSO_LINES, n >= 3, instant, 'klasso', 260, 200);
     }
+  };
+
+  /* ---------- s-then-now · the 2026 panel loops the recorded forest (1 tree, 500 trees, the plinko vote) ----------
+     The screenshot stays underneath as the fallback when clips/rf-forest.mp4 is missing. */
+  C['s-then-now'] = {
+    enter(slide) {
+      const box = slide.querySelector('.shot');
+      if (box && !box.dataset.probed) {
+        box.dataset.probed = '1';
+        const v = document.createElement('video');
+        v.muted = true; v.loop = true; v.playsInline = true; v.preload = 'auto'; v.src = 'clips/rf-forest.mp4';
+        v.setAttribute('aria-label', 'Recording of Random Forest by Hand: one tree, then 500, then a new student dropped through the forest');
+        v.addEventListener('loadeddata', () => { box.appendChild(v); box.classList.add('has-video'); this.play(slide); });
+      }
+    },
+    step(slide) { this.play(slide); },
+    play(slide) {
+      const v = slide.querySelector('.shot video');
+      if (!v) return;
+      const on = slide.classList.contains('active') && slide.querySelector('.shot').closest('[data-step]').classList.contains('on');
+      if (on && v.paused) { const p = v.play(); if (p && p.catch) p.catch(() => { }); }
+      else if (!on) { v.pause(); v.currentTime = 0; }
+    },
+    leave(slide) { const v = slide.querySelector('.shot video'); if (v) { v.pause(); v.currentTime = 0; } }
   };
 
   /* ---------- s-recipe · the evening on a timeline: 7 messages, 6 commits ---------- */
@@ -2063,6 +1995,21 @@ body[data-bare] .kaggle-hl, body.print .kaggle-hl { animation: none; transition:
     else if (k === 'b' || k === 'B' || k === '.') { stage.style.visibility = stage.style.visibility === 'hidden' ? '' : 'hidden'; }
   });
   stage.addEventListener('click', e => { if (!e.target.closest('a,button,video')) next(); });
+  // Mouse wheel or trackpad: scroll down = next build, up = previous. One gesture moves one build: a wheel notch or
+  // swipe fires many events (and a trackpad keeps firing while it coasts), so input stays locked until it pauses.
+  let wheelSum = 0, wheelLock = 0;
+  window.addEventListener('wheel', e => {
+    if (e.ctrlKey || document.body.classList.contains('presenter')) return; // ctrl+wheel stays browser zoom
+    if (!overlay.hidden && overlay.contains(e.target)) return;              // the notes strip scrolls normally
+    e.preventDefault();
+    const now = performance.now();
+    if (now < wheelLock) { wheelLock = Math.max(wheelLock, now + 220); return; }
+    const dy = e.deltaMode === 1 ? e.deltaY * 33 : e.deltaMode === 2 ? e.deltaY * 800 : e.deltaY;
+    wheelSum += Math.abs(e.deltaX) > Math.abs(dy) ? e.deltaX : dy;
+    if (Math.abs(wheelSum) < 40) return;
+    (wheelSum > 0 ? next : prev)();
+    wheelSum = 0; wheelLock = now + 500;
+  }, { passive: false });
 
   function openPresenter() {
     let w = null;
