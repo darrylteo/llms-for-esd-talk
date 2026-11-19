@@ -121,7 +121,7 @@
     else if (k === 'p' || k === 'P') openPresenter();
     else if (k === 'b' || k === 'B' || k === '.') { stage.style.visibility = stage.style.visibility === 'hidden' ? '' : 'hidden'; }
   });
-  stage.addEventListener('click', e => { if (!e.target.closest('a,button,video')) next(); });
+  stage.addEventListener('click', e => { if (!e.target.closest('a,button,video[controls]')) next(); });
   // Mouse wheel or trackpad: scroll down = next build, up = previous. One gesture moves one build: a wheel notch or
   // swipe fires many events (and a trackpad keeps firing while it coasts), so input stays locked until it pauses.
   let wheelSum = 0, wheelLock = 0;

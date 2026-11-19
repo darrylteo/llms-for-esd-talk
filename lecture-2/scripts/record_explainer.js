@@ -33,7 +33,7 @@ fs.mkdirSync(out, { recursive: true });
   await act('forest', 16000);
   await act('topredict', 2500);
   await act('rand', 1200);
-  await act('drop', 14000);
+  await act('drop', 24000);   // long enough for every ball to land
   mark('end');
   const v = page.video();
   await ctx.close();
