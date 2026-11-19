@@ -216,16 +216,19 @@ body[data-bare] .kaggle-hl, body.print .kaggle-hl { animation: none; transition:
 .shot img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 100%; }
 .shot { position: relative; }
 .shot video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #05081c; }
-.demo-card { position: absolute; right: 110px; top: 250px; width: 640px; padding: 34px 36px; border-radius: 22px; background: rgba(12,12,16,.96);
+.demo-card { position: absolute; right: 110px; top: 250px; width: 900px; padding: 34px 36px; border-radius: 22px; background: rgba(12,12,16,.96);
   border: 1px solid var(--l-new); box-shadow: 0 30px 120px rgba(0,0,0,.8), 0 0 60px rgba(255,159,10,.18); display: flex; flex-direction: column; align-items: center; gap: 16px; text-align: center; }
-.demo-card .demo-url { font: 700 29px/1.2 var(--f-mono); color: var(--ink); white-space: nowrap; }
+.demo-card .demo-url { font: 700 40px/1.2 var(--f-mono); color: var(--ink); white-space: nowrap; }
 .demo-card img { border-radius: 12px; background: #fff; }
 
 /* s-recipe */
-.recipe .rc { flex: 1; min-width: 0; padding: 22px 22px 24px; display: flex; flex-direction: column; gap: 12px; }
-.recipe .rc-n { font: 800 44px/1 var(--f-display); color: var(--l-new); }
-.recipe .rc-q { font: 400 19px/1.45 var(--f-mono); color: var(--ink); flex: 1; }
-.recipe .rc-t { font: 600 20px/1.3 var(--f-body); color: var(--mute); border-top: 1px solid var(--line); padding-top: 12px; }
+.recipe .rrow { display: grid; grid-template-columns: 56px 540px 1fr; column-gap: 28px; align-items: baseline; padding: 11px 0; border-top: 1px solid var(--line); }
+.recipe .rn { font: 800 44px/1 var(--f-display); color: var(--rc, var(--l-new)); }
+.recipe .rrow h3 { font: 700 36px/1.15 var(--f-display); margin: 0; letter-spacing: -.01em; }
+.recipe .rq { font: 400 31px/1.3 var(--f-body); color: var(--ink); margin: 0; }
+.recipe .ro { display: block; margin-top: 6px; color: var(--cached); font-weight: 600; }
+.recipe .rlast { font: 500 31px/1.3 var(--f-body); color: var(--mute); margin-top: 14px; }
+.recipe .rlast b { color: var(--ink); font-weight: 600; }
 
 /* s-pdpa */
 .bubble { background: var(--surface-2); border: 1px solid var(--line); border-radius: 22px 22px 22px 6px; padding: 16px 24px; display: flex; flex-direction: column; gap: 6px; }
@@ -239,3 +242,4 @@ body[data-bare] .kaggle-hl, body.print .kaggle-hl { animation: none; transition:
 .try .try-ask { font: 600 26px/1.25 var(--f-body); }
 .try .try-check { font: 500 22px/1.3 var(--f-body); color: var(--mute); }
 .try .try-check::before { content: 'CHECK'; font: 700 18px var(--f-mono); letter-spacing: .1em; color: var(--cached); margin-right: 10px; }
+.chips-lg .chip { font: 600 28px/1 var(--f-body); padding: 11px 20px; }

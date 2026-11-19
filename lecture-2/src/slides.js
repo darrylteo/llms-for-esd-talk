@@ -208,9 +208,9 @@
       const block = (x, n, c, label, cols) => {
         const g = s.append('g').attr('transform', `translate(${x},0)`);
         text(g, 0, 112, String(n), '').style('font', '800 88px var(--f-display)').style('fill', c);
-        text(g, 0, 146, label, '').style('font', '500 23px var(--f-body)').style('fill', COL.mute);
+        text(g, 0, 150, label, '').style('font', '500 30px var(--f-body)').style('fill', COL.mute);
         const dots = g.append('g').selectAll('circle').data(d3.range(n)).enter().append('circle')
-          .attr('cx', i => 5 + (i % cols) * 13).attr('cy', i => 172 + Math.floor(i / cols) * 13).attr('r', 4.5).attr('fill', c).attr('opacity', 0);
+          .attr('cx', i => 5 + (i % cols) * 13).attr('cy', i => 180 + Math.floor(i / cols) * 13).attr('r', 4.5).attr('fill', c).attr('opacity', 0);
         return dots;
       };
       this.d1 = block(0, ses.scripted, COL.ok, 'started by my scripts, no chat', 55);
@@ -218,8 +218,7 @@
       const share = Math.round(10 * ses.scripted / Math.max(1, ses.scripted + ses.interactive));
       this.claim = s.append('g').attr('opacity', 0);
       text(this.claim, 1680, 112, share + ' in 10', '', 'end').style('font', '800 88px var(--f-display)').style('fill', COL.ok);
-      text(this.claim, 1680, 146, 'now start without me', '', 'end').style('font', '600 26px var(--f-body)');
-      text(this.claim, 1680, 180, 'mostly short batch runs: graders, evals', 'lbl', 'end').style('font-size', '19px');
+      text(this.claim, 1680, 150, 'now start without me', '', 'end').style('font', '600 32px var(--f-body)');
     },
     step(slide, n, instant) {
       [1, 2, 3, 4].forEach(i => { const on = n >= i; if (on !== !!this.on[i]) { this.on[i] = on; vig[i](d3.select('#era' + i + '-svg'), on, instant); } });
@@ -518,10 +517,10 @@
       this.capBottle = text(s, 940, 546, 'short reports, not the whole voyage', 'lbl', 'middle').style('fill', COL.ok).style('font-size', '20px').attr('opacity', 0);
       this.capMates = s.append('g').attr('opacity', 0);
       const cnt = this.capMates.append('g').attr('transform', 'translate(1130,150)');
-      cnt.append('rect').attr('width', 500).attr('height', 136).attr('rx', 14).attr('fill', 'rgba(18,18,20,.94)').attr('stroke', COL.proj).attr('stroke-width', 2);
+      cnt.append('rect').attr('width', 500).attr('height', 146).attr('rx', 14).attr('fill', 'rgba(18,18,20,.94)').attr('stroke', COL.proj).attr('stroke-width', 2);
       text(cnt, 24, 38, 'A CREWMATE, PROMOTED TO CAPTAIN', '').style('font', '700 18px var(--f-mono)').style('letter-spacing', '.06em').style('fill', COL.proj);
       text(cnt, 24, 82, '9 messages between them', '').style('font', '700 30px var(--f-display)');
-      text(cnt, 24, 116, '5 from me · 2 hours, 18 Nov', '').style('font', '500 21px var(--f-mono)').style('fill', COL.mute);
+      text(cnt, 24, 122, '5 from me · 2 hours, 18 Nov', '').style('font', '500 26px var(--f-mono)').style('fill', COL.mute);
       // two-way messages between the promoted captain and the flagship
       this.chatG = s.append('g').attr('opacity', 0);
       layer.front.node().parentNode.insertBefore(this.chatG.node(), layer.front.node());
@@ -771,15 +770,13 @@
 
   /* ---------- s-kaggle · my 2019 R code ---------- */
   const RF_LINES = [
-    ['p', '> model3 <- randomForest('],
-    ['p', '+   as.factor(sentiment) ~ ., data = train,'],
-    ['p', '+   ntree = 2000)'],
+    ['p', '> randomForest(…, ntree = 2000)'],
     ['d', '# runtime: ~5 hours'],
     ['n', '# Kaggle score: 0.85']
   ];
   const LASSO_LINES = [
-    ['p', '> cv.glmnet(x = dtm_train, ...)   # a lasso'],
-    ['n', '# Kaggle score: 0.96355  ·  1st']
+    ['p', '> cv.glmnet(…)   # a lasso'],
+    ['n', '# Kaggle score: 0.96355 · 1st']
   ];
   C['s-kaggle'] = {
     steps: 4,
@@ -813,45 +810,7 @@
     leave(slide) { const v = slide.querySelector('.shot video'); if (v) { v.pause(); v.currentTime = 0; } }
   };
 
-  /* ---------- s-recipe · the evening on a timeline: 7 messages, 6 commits ---------- */
-  const MSGS = [['19:20', 1], ['19:55', 2], ['01:23', 3], ['02:04', 4], ['02:32', 5], ['02:44', 6], ['13:34', 7]];
-  C['s-recipe'] = {
-    steps: 6,
-    enter(slide, instant) {
-      const s = clear('recipe-svg');
-      const mins = hm => { const [h, m] = hm.split(':').map(Number); return (h < 12 ? h + 24 : h) * 60 + m; };
-      // three pieces of axis: the first hour, the late-night session, and the next day
-      const xa = d3.scaleLinear().domain([mins('19:05'), mins('20:10')]).range([20, 420]);
-      const xb = d3.scaleLinear().domain([mins('01:10'), mins('03:05')]).range([500, 1380]);
-      const x = m => m <= mins('20:10') ? xa(m) : xb(m);
-      const y = 84;
-      text(s, 20, 22, '7 MESSAGES FROM ME  ·  242 TOOL CALLS BY CLAUDE', 'lbl').style('fill', COL.neu);
-      [[20, 420], [500, 1380], [1460, 1660]].forEach(([a, b]) => s.append('line').attr('x1', a).attr('x2', b).attr('y1', y).attr('y2', y).attr('stroke', COL.line).attr('stroke-width', 3));
-      [460, 1420].forEach(bx => s.append('path').attr('d', 'M' + (bx - 2) + ',' + (y - 12) + ' l-10,24 M' + (bx + 12) + ',' + (y - 12) + ' l-10,24').attr('stroke', COL.dim).attr('stroke-width', 3));
-      text(s, 460, y + 36, 'away', 'lbl', 'middle').style('font-size', '16px');
-      ['19:30', '20:00', '01:30', '02:00', '02:30', '03:00'].forEach(h => {
-        s.append('line').attr('x1', x(mins(h))).attr('x2', x(mins(h))).attr('y1', y - 6).attr('y2', y + 6).attr('stroke', COL.dim).attr('stroke-width', 2);
-        text(s, x(mins(h)), y + 36, h, 'lbl', 'middle').style('font-size', '18px');
-      });
-      text(s, 20, y + 36, '17 Nov', 'lbl').style('font-size', '18px');
-      text(s, 500, y + 36, '18 Nov', 'lbl').style('font-size', '18px');
-      text(s, 1560, y + 36, 'next day', 'lbl', 'middle').style('font-size', '18px');
-      // first working page, 15 min after the first message
-      const w = s.append('g').attr('class', 'rmk');
-      w.append('line').attr('x1', x(mins('19:35'))).attr('x2', x(mins('19:35'))).attr('y1', y - 30).attr('y2', y).attr('stroke', COL.ok).attr('stroke-width', 2);
-      text(w, x(mins('19:35')) + 8, y - 34, '✓ working page, 15 min', '').style('font', '600 18px var(--f-mono)').style('fill', COL.ok);
-      // six commits between 01:27 and 02:57
-      const cg = s.append('g').attr('class', 'rmk');
-      ['01:27', '01:28', '01:44', '02:23', '02:38', '02:57'].forEach(h => cg.append('rect').attr('x', x(mins(h)) - 2).attr('y', y + 8).attr('width', 4).attr('height', 12).attr('fill', COL.sess));
-      text(cg, x(mins('02:10')), y - 34, '6 commits', '', 'middle').style('font', '600 18px var(--f-mono)').style('fill', COL.sess);
-      const px = d => d[1] === 7 ? 1560 : x(mins(d[0]));
-      const dots = s.selectAll('g.msg').data(MSGS).enter().append('g').attr('class', 'msg').attr('transform', d => `translate(${px(d)},${y})`).attr('opacity', 0);
-      dots.append('circle').attr('r', 15).attr('fill', COL.neu);
-      dots.append('text').attr('y', 6).attr('text-anchor', 'middle').text(d => d[1]).style('font', '800 17px var(--f-mono)').style('fill', '#000');
-      dots.transition().delay((d, i) => D(250 + i * 160, instant)).duration(D(300, instant)).attr('opacity', 1);
-      s.selectAll('.rmk').attr('opacity', 0).transition().delay(D(1500, instant)).duration(D(500, instant)).attr('opacity', 1);
-    }
-  };
+  /* ---------- s-recipe · five rows, one per message type; plain builds, no animation ---------- */
 
   /* ---------- s-storm · a storm above, a hook below ----------
      World: sky 0..620, surface ~620, calm water below. The camera drops 560 px when the hook pulls us under. */
@@ -936,9 +895,9 @@
       this.events = s.append('g');
       [['UserPromptSubmit', 'before your prompt reaches Claude', 0], ['PreToolUse', 'before any tool runs · can block it', 1], ['Stop', 'when Claude wants to stop · can send it back', 2]].forEach(([k, d, i]) => {
         const g = this.events.append('g').attr('class', 'ev').attr('transform', `translate(120,${360 + i * 150})`).attr('opacity', 0);
-        g.append('rect').attr('width', 640).attr('height', 118).attr('rx', 59).attr('fill', 'rgba(64,200,224,.10)').attr('stroke', COL.sess).attr('stroke-width', 2);
+        g.append('rect').attr('width', 800).attr('height', 124).attr('rx', 62).attr('fill', 'rgba(64,200,224,.10)').attr('stroke', COL.sess).attr('stroke-width', 2);
         text(g, 44, 52, k, '').style('font', '700 32px var(--f-mono)').style('fill', COL.sess);
-        text(g, 44, 90, d, '').style('font', '500 25px var(--f-body)');
+        text(g, 44, 96, d, '').style('font', '500 31px var(--f-body)');
       });
       this.quote = s.append('g').attr('opacity', 0);
       text(this.quote, 120, 900, '“Prompting is not a guarantee that a model will do it.”', '').style('font', '500 40px var(--f-display)');
@@ -1069,16 +1028,6 @@
   };
 
   /* ---------- s-exit2 · exit 1 lets Claude stop; exit 2 sends it back ---------- */
-  const TIDY_LINES = [
-    ['w', 'Stop hook feedback:'],
-    ['d', 'tidy_check: the folder breaks the tidy-folder rule'],
-    ['d', 'in CLAUDE.md. Fix these before ending the turn.'],
-    ['n', '- Scratchpad items with no note: stuck_ab.py.'],
-    ['d', '  Delete each one you no longer need. [...]'],
-    ['p', 'after fixing, run'],
-    ['p', '`python -I .claude/hooks/tidy_check.py`'],
-    ['p', 'and confirm it prints OK.']
-  ];
   C['s-exit2'] = {
     steps: 4,
     enter() {
@@ -1089,7 +1038,7 @@
         const g = s.append('g').attr('transform', `translate(${x},${y})`);
         g.append('rect').attr('width', w).attr('height', h).attr('rx', 18).attr('fill', COL.surf).attr('stroke', c).attr('stroke-width', 3);
         text(g, 26, 50, t1, '').style('font', '700 34px var(--f-display)').style('fill', c === COL.line ? COL.ink : c);
-        if (t2) text(g, 26, 86, t2, '').style('font', '500 22px var(--f-mono)').style('fill', COL.mute);
+        if (t2) text(g, 26, 90, t2, '').style('font', '500 27px var(--f-body)').style('fill', COL.mute);
         if (t3) text(g, 26, 118, t3, '').style('font', '600 22px var(--f-body)');
         return g;
       };
@@ -1101,22 +1050,22 @@
       const e1 = this.b1.append('g').attr('transform', 'translate(720,40)');
       e1.append('rect').attr('width', 270).attr('height', 168).attr('rx', 18).attr('fill', 'rgba(255,69,58,.08)').attr('stroke', COL.bad).attr('stroke-width', 2.5).attr('stroke-dasharray', '8 6');
       text(e1, 22, 52, 'exit 1', '').style('font', '800 36px var(--f-mono)').style('fill', COL.bad);
-      text(e1, 22, 90, 'non-blocking error', '').style('font', '500 19px var(--f-mono)').style('fill', COL.mute);
-      text(e1, 22, 130, '✗ task marked', '').style('font', '600 24px var(--f-body)');
-      text(e1, 22, 158, '   complete anyway', '').style('font', '600 24px var(--f-body)');
+      text(e1, 22, 90, 'non-blocking error', '').style('font', '500 27px var(--f-body)').style('fill', COL.mute);
+      text(e1, 22, 128, '✗ task marked', '').style('font', '600 28px var(--f-body)');
+      text(e1, 22, 158, '   complete anyway', '').style('font', '600 28px var(--f-body)');
       this.b2 = s.append('g').attr('opacity', 0);
       this.b2.append('path').attr('d', 'M480,178 L480,282').attr('stroke', COL.ok).attr('stroke-width', 3.5).attr('marker-end', A('ok'));
       const e2 = this.b2.append('g').attr('transform', 'translate(310,290)');
       e2.append('rect').attr('width', 340).attr('height', 150).attr('rx', 18).attr('fill', 'rgba(48,209,88,.10)').attr('stroke', COL.ok).attr('stroke-width', 3);
       text(e2, 24, 54, 'exit 2', '').style('font', '800 38px var(--f-mono)').style('fill', COL.ok);
-      text(e2, 24, 92, 'stderr goes to Claude:', '').style('font', '500 20px var(--f-mono)').style('fill', COL.mute);
-      text(e2, 24, 124, '"2 checks failed: …"', '').style('font', '600 22px var(--f-mono)');
+      text(e2, 24, 94, 'stderr goes to Claude:', '').style('font', '500 27px var(--f-body)').style('fill', COL.mute);
+      text(e2, 24, 128, '"2 checks failed: …"', '').style('font', '600 27px var(--f-body)');
       this.back = this.b2.append('path').attr('d', 'M308,366 C170,366 125,300 125,186').attr('fill', 'none').attr('stroke', COL.ok).attr('stroke-width', 3.5).attr('marker-end', A('ok'));
-      text(this.b2, 40, 300, 'fixes it,', '').style('font', '600 24px var(--f-body)').style('fill', COL.ok);
-      text(this.b2, 40, 330, 'tries again', '').style('font', '600 24px var(--f-body)').style('fill', COL.ok);
+      text(this.b2, 20, 300, 'fixes it,', '').style('font', '600 28px var(--f-body)').style('fill', COL.ok);
+      text(this.b2, 20, 334, 'tries again', '').style('font', '600 28px var(--f-body)').style('fill', COL.ok);
       this.code = s.append('g').attr('opacity', 0);
-      this.code.append('rect').attr('x', 10).attr('y', 476).attr('width', 980).attr('height', 64).attr('rx', 12).attr('fill', '#0b0b0d').attr('stroke', COL.line);
-      const ct = text(this.code, 34, 517, 'your eval, bundled:  ', '').style('font', '500 23px var(--f-mono)').style('fill', COL.mute);
+      this.code.append('rect').attr('x', 10).attr('y', 470).attr('width', 980).attr('height', 76).attr('rx', 12).attr('fill', '#0b0b0d').attr('stroke', COL.line);
+      const ct = text(this.code, 26, 519, 'your eval, bundled: ', '').style('font', '500 29px var(--f-mono)').style('fill', COL.mute);
       ct.append('tspan').text('python evals/check.py || exit 2').style('fill', COL.ok).style('font-weight', 700);
       this.dot = s.append('circle').attr('r', 11).attr('fill', COL.ink).attr('opacity', 0);
     },
@@ -1133,79 +1082,103 @@
       fade(this.b1, n >= 2, 500, instant); fade(this.b2, n >= 2, 500, instant); fade(this.code, n >= 2, 500, instant);
       if (n >= 2 && !this.looping) { this.looping = true; later('exit', () => this.loop(), D(700, instant)); }
       if (n < 2) { this.looping = false; stop('exit'); this.dot.interrupt().attr('opacity', 0); }
-      typeLines(document.getElementById('term-tidy'), TIDY_LINES, n >= 4, instant, 'tidy', 120, 200);
     },
     leave() { stop('exit'); this.looping = false; if (this.dot) this.dot.interrupt(); }
   };
 
-  /* ---------- s-pdpa · a UserPromptSubmit hook stops an NRIC before it leaves the laptop ---------- */
+  /* ---------- s-pdpa · a UserPromptSubmit hook catches an NRIC before it leaves the laptop ----------
+     The hook is the steel J-hook from the storm slide, on a line, swaying a little. The prompt with an NRIC and a phone
+     number slides in and snags on its point; the clean prompt passes underneath to Claude. */
   C['s-pdpa'] = {
     steps: 4,
     enter() {
-      stop('pii'); this.played = false;
-      const s = clear('pii-svg');
-      const A = arrows(s, 9);
-      // the gate
-      const gate = s.append('g').attr('transform', 'translate(560,0)');
-      gate.append('rect').attr('x', -8).attr('y', 6).attr('width', 16).attr('height', 388).attr('rx', 8).attr('fill', COL.sess).attr('opacity', .85);
-      text(gate, 0, 0, '', '');
-      const lbl = gate.append('g').attr('transform', 'translate(0,392)');
-      text(lbl, 0, 0, '', '');
-      text(gate, 22, 30, 'UserPromptSubmit hook', '').style('font', '700 20px var(--f-mono)').style('fill', COL.sess);
+      stop('pii'); this.played = false; this.hooked = false; this.tugY = 0; if (this.swayT) { this.swayT.stop(); this.swayT = null; }
+      const root = clear('pii-svg');
+      const A = arrows(root, 9);
+      const gr = root.append('defs').append('linearGradient').attr('id', 'pii-steel').attr('x1', 0).attr('y1', 0).attr('x2', 1).attr('y2', 0);
+      [['0%', '#e9edf2'], ['45%', '#9aa3ad'], ['100%', '#5d6670']].forEach(([o, c]) => gr.append('stop').attr('offset', o).attr('stop-color', c));
+      const s = root.append('g').attr('transform', 'translate(0,40)');
       // Claude
       const cl = s.append('g').attr('transform', 'translate(780,40)');
       cl.append('rect').attr('width', 230).attr('height', 330).attr('rx', 20).attr('fill', COL.surf).attr('stroke', COL.sys).attr('stroke-width', 3);
       text(cl, 115, 52, 'Claude', '', 'middle').style('font', '700 32px var(--f-display)');
-      this.recv1 = text(cl, 115, 140, 'receives nothing', '', 'middle').style('font', '600 21px var(--f-body)').style('fill', COL.mute).attr('opacity', 0);
-      this.recv2 = text(cl, 115, 280, '✓ student A0423', '', 'middle').style('font', '600 21px var(--f-mono)').style('fill', COL.ok).attr('opacity', 0);
-      // prompt 1 (contains an NRIC and a phone number)
+      this.recv1 = text(cl, 115, 140, 'receives nothing', '', 'middle').style('font', '600 27px var(--f-body)').style('fill', COL.mute).attr('opacity', 0);
+      this.recv2 = text(cl, 115, 317, '✓ student A0423', '', 'middle').style('font', '600 26px var(--f-body)').style('fill', COL.ok).attr('opacity', 0);
+      // the prompts
       const card = (y, lines, c) => {
         const g = s.append('g').attr('transform', `translate(10,${y})`).attr('opacity', 0);
-        g.append('rect').attr('width', 500).attr('height', 120).attr('rx', 14).attr('fill', '#0b0b0d').attr('stroke', c).attr('stroke-width', 2.5);
+        g.append('rect').attr('width', 520).attr('height', 140).attr('rx', 14).attr('fill', '#0b0b0d').attr('stroke', c).attr('stroke-width', 2.5);
         lines.forEach((l, i) => {
-          const t = g.append('text').attr('x', 20).attr('y', 38 + i * 32).style('font', '500 21px var(--f-mono)');
-          l.forEach(([seg, cls]) => t.append('tspan').text(seg).attr('class', cls || '').style('fill', cls === 'pii' ? COL.ink : COL.ink));
+          const t = g.append('text').attr('x', 18).attr('y', 42 + i * 38).style('font', '500 26px var(--f-mono)');
+          l.forEach(([seg, cls]) => t.append('tspan').text(seg).attr('class', cls || '').style('fill', COL.ink));
         });
         return g;
       };
       this.c1 = card(40, [[['> Draft a reply to ']], [['S1234567D', 'pii'], [' (mobile ']], [['9123 4567', 'pii'], [') about the late work.']]], COL.line);
       this.err = s.append('g').attr('opacity', 0);
-      text(this.err, 10, 196, 'exit 2 · operation blocked by hook', '').style('font', '700 21px var(--f-mono)').style('fill', COL.bad);
-      text(this.err, 10, 224, 'NRIC/FIN and phone number found', '').style('font', '500 21px var(--f-mono)').style('fill', COL.bad);
-      this.c2 = card(258, [[['> Draft a reply to student']], [['A0423 about the late work.']]], COL.ok);
-      this.c2.select('rect').attr('height', 88);
-      this.a2 = s.append('path').attr('d', 'M520,302 L770,302').attr('stroke', COL.ok).attr('stroke-width', 3).attr('marker-end', A('ok')).attr('opacity', 0);
+      text(this.err, 10, 238, 'exit 2 · blocked by the hook', '').style('font', '700 26px var(--f-mono)').style('fill', COL.bad);
+      text(this.err, 10, 272, 'NRIC/FIN and phone found', '').style('font', '500 26px var(--f-mono)').style('fill', COL.bad);
+      this.c2 = card(298, [[['> Draft a reply to student']], [['A0423 about the late work.']]], COL.ok);
+      this.c2.select('rect').attr('height', 100);
+      this.a2 = s.append('path').attr('d', 'M540,348 L770,348').attr('stroke', COL.ok).attr('stroke-width', 3).attr('marker-end', A('ok')).attr('opacity', 0);
+      // the hook on its line (drawn over the first prompt, so its point pierces the card)
+      const EX = 650, EY = 8, K = 0.55;               // eye position and scale of the storm hook
+      this.hookG = s.append('g');
+      this.hookG.append('line').attr('x1', EX).attr('x2', EX).attr('y1', -40).attr('y2', EY - 11).attr('stroke', '#d8e2ea').attr('stroke-width', 2).attr('opacity', .8);
+      const H = this.hookG.append('g').attr('transform', `translate(${EX},${EY}) scale(${K})`);
+      H.append('circle').attr('r', 20).attr('fill', 'none').attr('stroke', 'url(#pii-steel)').attr('stroke-width', 11);
+      H.append('path').attr('d', 'M0,20 L0,330 C0,450 -190,450 -190,330 L-190,250').attr('fill', 'none').attr('stroke', 'url(#pii-steel)').attr('stroke-width', 18).attr('stroke-linecap', 'round');
+      H.append('path').attr('d', 'M-199,262 L-190,206 L-160,262 Z').attr('fill', '#c9d1d9');
+      H.append('path').attr('d', 'M-182,300 L-150,272').attr('stroke', '#c9d1d9').attr('stroke-width', 9).attr('stroke-linecap', 'round');
+      H.append('path').attr('d', 'M-5,40 L-5,320').attr('stroke', '#ffffff').attr('stroke-width', 3).attr('opacity', .55);
+      text(s, EX + 22, -12, 'UserPromptSubmit hook', '').style('font', '700 24px var(--f-mono)').style('fill', COL.sess);
+      this.pivot = [EX, -40];
+      this.sway(0);
+      if (!reduce && !document.body.dataset.bare) {
+        const t0 = performance.now();
+        this.swayT = d3.timer(() => this.sway(Math.sin((performance.now() - t0) / 1000 * 1.3) * 2.2 * (this.hooked ? 0.35 : 1)));
+      }
+    },
+    sway(deg) {
+      const [px, py] = this.pivot, tr = `translate(0,${(this.tugY || 0).toFixed(1)}) rotate(${deg.toFixed(2)},${px},${py})`;
+      this.hookG.attr('transform', tr);
+      if (this.hooked) this.c1.attr('transform', tr + ' translate(40,40) rotate(-2.5,505,83)');
     },
     play(instant) {
       const now = instant || reduce || document.body.dataset.bare;
       const c1 = this.c1, pii = c1.selectAll('tspan.pii');
-      if (now) {
-        c1.attr('opacity', 1).attr('transform', 'translate(40,40)'); c1.select('rect').attr('stroke', COL.bad);
+      const caught = () => {
+        c1.select('rect').attr('stroke', COL.bad);
         pii.style('fill', COL.bad).style('text-decoration', 'line-through');
+      };
+      if (now) {
+        this.hooked = true; c1.attr('opacity', 1); this.sway(0); caught();
         this.err.attr('opacity', 1); this.recv1.attr('opacity', 1);
         this.c2.attr('opacity', 1); this.a2.attr('opacity', 1); this.recv2.attr('opacity', 1); return;
       }
+      // slides in, snags on the point, tips over a little and hangs there; the hook gives a short tug
       c1.attr('transform', 'translate(-60,40)').transition().duration(500).attr('opacity', 1).attr('transform', 'translate(10,40)')
-        .transition().duration(900).ease(d3.easeCubicIn).attr('transform', 'translate(50,40)')
+        .transition().duration(800).ease(d3.easeCubicIn).attr('transform', 'translate(40,40)')
+        .transition().duration(260).ease(d3.easeBackOut.overshoot(2)).attr('transform', 'translate(40,40) rotate(-2.5,505,83)')
         .on('end', () => {
+          this.hooked = true;
           c1.select('rect').transition().duration(200).attr('stroke', COL.bad);
           pii.transition().duration(200).style('fill', COL.bad);
-          c1.transition().duration(70).attr('transform', 'translate(34,40)').transition().duration(70).attr('transform', 'translate(46,40)')
-            .transition().duration(70).attr('transform', 'translate(38,40)').transition().duration(90).attr('transform', 'translate(40,40)');
           later('pii', () => pii.style('text-decoration', 'line-through'), 300);
+          d3.select({}).transition().duration(420).tween('tug', () => k => { this.tugY = -12 * Math.sin(Math.PI * k) * (1 - 0.4 * k); if (!this.swayT) this.sway(0); });
           fade(this.err, true, 400); fade(this.recv1, true, 600);
           later('pii', () => {
-            this.c2.transition().duration(600).attr('opacity', 1);
+            this.c2.attr('transform', 'translate(-60,298)').transition().duration(700).ease(d3.easeCubicOut).attr('opacity', 1).attr('transform', 'translate(10,298)');
             this.a2.transition().delay(700).duration(700).attr('opacity', 1);
             this.recv2.transition().delay(1300).duration(500).attr('opacity', 1);
-          }, 1800);
+          }, 1600);
         });
     },
     step(slide, n, instant) {
       if (n >= 3 && !this.played) { this.played = true; this.play(instant); }
-      if (n < 3 && this.played) { this.played = false; stop('pii'); this.enter(); }
+      if (n < 3 && this.played) { this.played = false; this.hooked = false; stop('pii'); this.enter(); }
     },
-    leave() { stop('pii'); }
+    leave() { stop('pii'); if (this.swayT) { this.swayT.stop(); this.swayT = null; } }
   };
 
 

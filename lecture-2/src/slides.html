@@ -23,10 +23,10 @@
     </div>
     <div class="col grow" style="gap:20px">
       <div data-step="2" class="col" style="gap:8px"><p class="mono small mute">MY TEAM'S R CODE</p>
-        <pre class="term exhibit panel verbatim" id="term-rf" style="font-size:21px;padding:18px 22px;min-height:150px"></pre></div>
+        <pre class="term exhibit panel verbatim" id="term-rf" style="font-size:30px;padding:18px 22px;min-height:160px"></pre></div>
       <div data-step="3" class="col" style="gap:8px">
-        <pre class="term exhibit panel verbatim" id="term-lasso" style="font-size:21px;padding:18px 22px;min-height:96px"></pre></div>
-      <p data-step="4" style="font-size:34px;font-weight:600;line-height:1.25">Knowing how to call it was enough to win. <span style="color:var(--l-new)">Not enough to teach it.</span></p>
+        <pre class="term exhibit panel verbatim" id="term-lasso" style="font-size:30px;padding:18px 22px;min-height:116px"></pre></div>
+      <p data-step="4" style="font-size:42px;font-weight:700;line-height:1.2">Knowing how to call it was enough to win. <span style="color:var(--l-new)">Not enough to teach it.</span></p>
     </div>
   </div>
   <div class="src">Kaggle, "2019 40.016 The Analytics Edge Competition", public leaderboard (classmates' photos blurred). Code and run times: my team's submission (final.R, depedencies.R).</div>
@@ -42,7 +42,7 @@
   <h1 class="claim">In 2019 we read about 500 trees. This term, students <em>grew them</em>.</h1>
   <div class="body row" style="gap:40px;align-items:stretch">
     <div class="col" style="width:640px;gap:14px" data-step="1">
-      <p class="mono small" style="color:var(--mute)">2019 · READ</p>
+      <p class="mono" style="font-size:30px;color:var(--mute)">2019 · READ</p>
       <div class="beamer">
         <div class="bm-bar">Random Forests</div>
         <div class="bm-body">
@@ -56,19 +56,16 @@
       </div>
     </div>
     <div class="col grow" style="gap:14px" data-step="2">
-      <p class="mono small" style="color:var(--l-new)">2026 · DO</p>
+      <p class="mono" style="font-size:30px;color:var(--l-new)">2026 · DO</p>
       <div class="shot"><img src="assets/rf-plinko.jpg" alt="Random Forest by Hand: a new student dropped through 500 trees" width="980" height="667"></div>
-      <div class="row" style="gap:12px;flex-wrap:wrap">
-        <span class="chip"><span class="dot" style="background:var(--l-new)"></span>3 cohorts · ~70 students</span>
-        <span class="chip">build tree 1 → watch 499 grow → drop a student</span>
-      </div>
+      <p style="font-size:32px;font-weight:600">3 cohorts · <span style="color:var(--l-new)">~70 students</span></p>
     </div>
   </div>
   <div class="demo-card" data-step="3">
     <p class="mono small" style="color:var(--l-new);letter-spacing:.14em">LIVE DEMO</p>
     <p class="demo-url">ml-explainers.sutdpm.workers.dev</p>
     <img src="assets/qr-explainers.svg" alt="QR code for the explainers site" width="220" height="220">
-    <p class="small mute">Try it on your phone.</p>
+    <p style="font-size:32px;color:var(--mute)">Try it on your phone.</p>
   </div>
   <div class="src">2019 slide redrawn in plain beamer style from the algorithm steps (James et al., ISLR ch. 8.2); not an original course slide. Recording: Random Forest by Hand, ml-explainers.</div>
   <aside class="notes">
@@ -83,16 +80,13 @@
 <section class="slide" id="s-recipe" data-section="B Teaching" data-t="75" style="--accent:var(--l-new)">
   <div class="kicker"><b>Teaching</b> · how I made it</div>
   <h1 class="claim">Two explainers took <em>7 messages</em> and one evening. Here is the recipe.</h1>
-  <div class="body col" style="gap:22px">
-    <svg id="recipe-svg" viewBox="0 0 1680 132" width="1680" height="132"></svg>
-    <div class="row recipe" style="gap:18px">
-      <div class="panel rc" data-step="1"><div class="rc-n">1</div><h3>Describe the whiteboard exercise</h3><p class="rc-q">“start with a dataframe with 10 rows, 5 variables, 1 response variable. clicking a leaf will show 2 random variables to split on”</p><p class="rc-t">15 min to a working page</p></div>
-      <div class="panel rc" data-step="2"><div class="rc-n">2</div><h3>Ask for delight</h3><p class="rc-q">“add sound for the plinko. it is very satisfying.”</p><p class="rc-t">attention is the first prerequisite</p></div>
-      <div class="panel rc" data-step="3"><div class="rc-n">3</div><h3>Name the bar</h3><p class="rc-q">“the bar is the random forest page.”</p><p class="rc-t">page 2 copies page 1's quality</p></div>
-      <div class="panel rc" data-step="4"><div class="rc-n">4</div><h3>Pin it to the real library</h3><p class="rc-q">“use the default parameters (similar to random forest … in R)”</p><p class="rc-t">numbers your students can reproduce</p></div>
-      <div class="panel rc" data-step="5" style="border-color:var(--cached)"><div class="rc-n" style="color:var(--cached)">5</div><h3>Ask a second agent to attack it</h3><p class="rc-q">“adversarial review on ml explainers files.”</p><p class="rc-t" style="color:var(--cached)">found 122 of 400 XGBoost predictions off by up to 19 points; now within 0.0002</p></div>
-    </div>
-    <p data-step="6" class="small" style="margin-top:4px"><span class="mute">When something looks wrong, ask before it edits:</span> <span class="mono">“reason it out before making any changes”</span><span class="mute"> · Hosting: a free static page.</span></p>
+  <div class="body col recipe">
+    <div class="rrow" data-step="1"><span class="rn">1</span><h3>Describe the whiteboard exercise</h3><p class="rq">“start with a dataframe with 10 rows, 5 variables, 1 response variable. clicking a leaf will show 2 random variables to split on”</p></div>
+    <div class="rrow" data-step="2"><span class="rn">2</span><h3>Ask for delight</h3><p class="rq">“add sound for the plinko. it is very satisfying.”</p></div>
+    <div class="rrow" data-step="3"><span class="rn">3</span><h3>Name the bar</h3><p class="rq">“the bar is the random forest page.”</p></div>
+    <div class="rrow" data-step="4"><span class="rn">4</span><h3>Pin it to the real library</h3><p class="rq">“use the default parameters (similar to random forest … in R)”</p></div>
+    <div class="rrow" data-step="5" style="--rc:var(--cached)"><span class="rn">5</span><h3>Ask a second agent to attack it</h3><p class="rq">“adversarial review on ml explainers files.”<span class="ro">122 of 400 XGBoost predictions were off. Now within 0.0002.</span></p></div>
+    <p class="rlast" data-step="6">When something looks wrong, ask before it edits: <b>“reason it out before making any changes”</b></p>
   </div>
   <div class="src">My Claude Code sessions for ml-explainers, 17–18 Nov 2026 (messages quoted verbatim); review against xgboost 3.4.1 and R randomForest on the same 10 rows.</div>
   <aside class="notes">
@@ -171,10 +165,8 @@
   <div class="body row" style="gap:44px;align-items:flex-start">
     <div style="width:1000px"><svg id="exit-svg" viewBox="0 0 1000 560" width="1000" height="560"></svg></div>
     <div class="col grow" style="gap:22px">
-      <div class="quote" data-step="3" style="font-size:28px">“Make sure that your scripts exit with a 2 exit code, because that's what actually sends Claude back to fix it.”<cite>Lydia Hallie, Claude Code team, Anthropic (13:09)</cite></div>
-      <div data-step="4" class="col" style="gap:8px"><p class="mono small mute">MY STOP HOOK · 5 TIMES IN 2 HOURS</p>
-        <pre class="term exhibit panel verbatim" id="term-tidy" style="font-size:18px;padding:16px 20px;min-height:200px"></pre>
-        <p class="small mute">Write the message as an instruction: what to fix, and how to confirm.</p></div>
+      <div class="quote" data-step="3" style="font-size:36px">“Make sure that your scripts exit with a 2 exit code, because that's what actually sends Claude back to fix it.”<cite>Lydia Hallie, Claude Code team, Anthropic (13:09)</cite></div>
+      <p data-step="4" style="font-size:32px;line-height:1.3;font-weight:600">Write the hook's message as an instruction: <span style="color:var(--l-sess)">what to fix, and how to confirm.</span></p>
     </div>
   </div>
   <div class="src">Claude Code hooks reference: exit 1 is "a non-blocking error … If your hook is meant to enforce a policy, use exit 2". L. Hallie, "Rethinking Claude Code Best Practices" (13:00–13:24). Hook output: my airport simulation project, 18 Nov 2026.</div>
@@ -189,22 +181,19 @@
   <div class="kicker"><b>Practice</b> · personal data (PDPA)</div>
   <h1 class="claim">If you can't take it back, <em>don't leave it to the prompt</em>.</h1>
   <div class="body row" style="gap:40px;align-items:flex-start">
-    <div class="col" style="width:640px;gap:18px">
-      <div data-step="1" class="col" style="gap:10px">
-        <div class="bubble"><span class="mono small mute">CYBERSECURITY OFFICE</span><p>“Is there personal data in it?”</p></div>
-        <p class="small" style="padding-left:6px">Personal data is <span style="color:var(--ink);font-weight:600">“data, whether true or not, about an individual who can be identified”</span>.<span class="mute"> PDPA, s 2(1)</span></p>
-      </div>
-      <div data-step="2" class="chips">
+    <div class="col" style="width:600px;gap:26px">
+      <div data-step="1" class="bubble"><span class="mono small mute">CYBERSECURITY OFFICE</span><p>“Is there personal data in it?”</p></div>
+      <div data-step="2" class="chips chips-lg">
         <span class="chip bad">✗ NRIC / FIN</span><span class="chip bad">✗ personal mobile</span><span class="chip bad">✗ home address</span>
         <span class="chip bad">✗ matric no. + grades</span><span class="chip bad">✗ medical certificates</span>
         <span class="chip ok">✓ business contact info</span><span class="chip ok">✓ anonymised totals</span>
-        <p class="small mute" style="width:100%;margin-top:6px">Rule of thumb: not on the public web? Keep it out of the prompt.</p>
       </div>
-      <div class="quote" data-step="2" style="font-size:24px">“The NRIC number is a permanent and irreplaceable identifier.”<cite>PDPC, NRIC Advisory Guidelines, 2018</cite></div>
+      <p data-step="2" style="font-size:36px;font-weight:700;line-height:1.2">Not on the public web? <span style="color:var(--bad)">Keep it out of the prompt.</span></p>
     </div>
     <div class="col grow" style="gap:18px">
-      <div data-step="3"><svg id="pii-svg" viewBox="0 0 1020 400" width="1020" height="400"></svg></div>
-      <div class="quote" data-step="4" style="font-size:25px">“Permissions only decide if a tool call runs, but they cannot limit what it can reach once it's running.”<cite>Lydia Hallie (7:55): so keep student records outside the folder Claude works in</cite></div>
+      <div data-step="3"><svg id="pii-svg" viewBox="0 0 1020 440" width="1020" height="440"></svg></div>
+      <div class="quote" data-step="4" style="font-size:34px">“Permissions only decide if a tool call runs, but they cannot limit what it can reach once it's running.”<cite>Lydia Hallie, Claude Code team, Anthropic (7:55)</cite></div>
+      <p data-step="4" style="font-size:32px;font-weight:600">So keep student records <span style="color:var(--bad)">outside the folder Claude works in.</span></p>
     </div>
   </div>
   <div class="src">PDPC, Advisory Guidelines on Key Concepts in the PDPA (rev. 29 Apr 2026): definition, business contact exclusion. PDPC media release, 31 Aug 2018. The NRIC shown is a made-up example. Hook: handout/block_pii.py.</div>

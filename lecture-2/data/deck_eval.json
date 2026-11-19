@@ -22,12 +22,12 @@
  {
   "id": "Q1",
   "pass": true,
-  "detail": "10 quotes match their sources"
+  "detail": "8 quotes match their sources"
  },
  {
   "id": "N1",
   "pass": true,
-  "detail": "11 numbers and the 2019 R code check out"
+  "detail": "7 numbers and the 2019 R code check out"
  },
  {
   "id": "F1",

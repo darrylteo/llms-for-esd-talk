@@ -34,8 +34,6 @@ QUOTES = [
     ("Prompting is not a guarantee that a model will do it.", "lydia_hallie_best_practices.txt", "prompting is not a guarantee that a model will do it"),
     ("Permissions only decide if a tool call runs, but they cannot limit what it can reach once it's running.",
      "lydia_hallie_best_practices.txt", "permissions only decide if a tool call runs, but they cannot limit what it can reach once it's running"),
-    ("The NRIC number is a permanent and irreplaceable identifier.", "web_excerpts.md", "The NRIC number is a permanent and irreplaceable identifier"),
-    ("data, whether true or not, about an individual who can be identified", "web_excerpts.md", "data, whether true or not, about an individual who can be identified"),
     ("start with a dataframe with 10 rows, 5 variables, 1 response variable. clicking a leaf will show 2 random variables to split on",
      "explainer_build.md", "start with a dataframe with 10 rows, 5 variables, 1 response variable. clicking a leaf will show 2 random variables to split on"),
     ("add sound for the plinko. it is very satisfying.", "explainer_build.md", "add sound for the plinko. it is very satisfying."),
@@ -46,11 +44,9 @@ QUOTES = [
 # number shown -> source file and the text that backs it
 NUMBERS = [
     ("0.96355", "web_excerpts.md", None, "kaggle"), ("7 messages", "explainer_build.md", "Total: 7 typed messages", None),
-    ("242", "explainer_build.md", "181 tool calls", None), ("15 min", "explainer_build.md", "15 minutes after the first message", None),
     ("122 of 400", "explainer_build.md", "122 got a different prediction, by up to 19 points", None), ("0.0002", "explainer_build.md", "within 0.0002", None),
     ("9 messages", "web_excerpts.md", "9 messages between the two sessions", None), ("5 from me", "web_excerpts.md", "the user typed 5 messages", None),
-    ("~70 students", "explainer_build.md", "3 cohorts of about 20–25 students", None), ("5 TIMES IN 2 HOURS", "web_excerpts.md", "Fired 5 times", None),
-    ("6 commits", "explainer_build.md", "6 commits", None),
+    ("~70 students", "explainer_build.md", "3 cohorts of about 20–25 students", None),
 ]
 # my 2019 team code, outside this repo: set KAGGLE_R_DIR to check it (skipped otherwise)
 KAGGLE_R = Path(os.environ.get("KAGGLE_R_DIR", "/nonexistent"))
