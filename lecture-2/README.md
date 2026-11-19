@@ -32,7 +32,7 @@ A 15-minute talk for SUTD faculty and staff, built from the slides of [lecture 1
 | `src/slides.html`, `src/slides.js` | Every slide, its speaker notes, and its animation, keyed by slide id |
 | `src/engine.js`, `src/deck.css`, `src/shell.html` | Slide engine and styles, from lecture 1. Colours and fonts are in `../shared/theme-keynote.css` |
 | `assets/` | Kaggle crop (classmates' photos blurred), explainer screenshot, QR code |
-| `clips/rf-forest.mp4` | 18 s recording of the live Random Forest explainer (`scripts/record_explainer.js`) |
+| `clips/rf-forest.mp4` | 25 s recording of the live Random Forest explainer: one split chosen by hand, the forest growing, a new student dropped through it (`scripts/record_explainer.js`) |
 | `handout/` | `block_pii.py` (UserPromptSubmit hook), its planted test, and a one-page handout |
 
 ## Checks

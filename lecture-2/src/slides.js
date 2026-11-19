@@ -760,7 +760,7 @@
       if (v) {
         if (n === 2 && this.state < 2 && !instant) { try { v.currentTime = 0; const p = v.play(); if (p && p.catch) p.catch(() => { }); } catch (e) { } }
         if (n < 2) { v.pause(); try { v.currentTime = 0; } catch (e) { } }
-        if (n >= 2 && instant) { try { v.currentTime = 12; } catch (e) { } }
+        if (n >= 2 && instant) { try { v.currentTime = 16.5; } catch (e) { } }
       }
       this.state = n;
     },
@@ -795,7 +795,7 @@
         box.dataset.probed = '1';
         const v = document.createElement('video');
         v.muted = true; v.loop = true; v.playsInline = true; v.preload = 'auto'; v.src = 'clips/rf-forest.mp4';
-        v.setAttribute('aria-label', 'Recording of Random Forest by Hand: one tree, then 500, then a new student dropped through the forest');
+        v.setAttribute('aria-label', 'Recording of Random Forest by Hand: a split chosen by hand on tree one, then 500 trees, then a new student dropped through the forest');
         v.addEventListener('loadeddata', () => { box.appendChild(v); box.classList.add('has-video'); this.play(slide); });
       }
     },
