@@ -34,16 +34,9 @@ A 15-minute talk for SUTD faculty and staff, built from the slides of [lecture 1
 | `assets/` | Kaggle crop (classmates' photos blurred), explainer screenshot, QR code |
 | `clips/rf-forest.mp4` | 15 s recording of the live Random Forest explainer (`scripts/record_explainer.js`) |
 | `handout/` | `block_pii.py` (UserPromptSubmit hook), its planted test, and a one-page handout |
-| `data/sources/` | The facts behind every quote and number: Lydia Hallie transcript excerpts, the explainer build log, PDPA and hooks excerpts (not published) |
 
-## Rebuild and check
+## Checks
 
-Run from this folder (`lecture-2/`):
+Before the talk, `scripts/eval_deck.py` checked timing, headline length, rendering and overflow on every slide, every quote and key number against its source, the files the deck references, the hook's tests, and writing style. The sources (transcript excerpts and build logs) aren't published, so the quote and number checks only run on the original copy.
 
-```bash
-python -I ../shared/build.py && python -I ../shared/shoot.py && python -I scripts/eval_deck.py
-```
-
-`eval_deck.py` checks timing, headline length, rendering errors and overflow on every slide, every quote and key number against `data/sources/`, referenced files, the hook's tests, and writing style. `data/sources/` (transcript excerpts and build logs) is not published, so the quote and number checks only run on the original copy. To re-record the forest clip, see the header of `scripts/record_explainer.js`.
-
-Slide 1's flip-book is a pre-rendered film (`film/flipbook.mp4`, 60 fps with the paper sounds baked in), because 29 live 3D pages stuttered on a projector. Each page is a WebGL mesh that wraps around a moving crease (a corner peel), so it bends like paper. To re-render it, see the headers of `film/src/render_flipbook.js` and `film/src/flipbook_audio.py`. The CSS version in `src/slides.js` is the fallback when the file is missing.
+Slide 1's flip-book is a pre-rendered film (`film/flipbook.mp4`, 60 fps with the paper sounds baked in): each page is a WebGL mesh that peels up from its bottom-right corner and bends like paper. If the file is missing, a simpler CSS version plays instead.

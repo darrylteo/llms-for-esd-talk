@@ -14,6 +14,17 @@ python -I ../shared/shoot.py && python -I scripts/eval_deck.py  # render every s
 
 Edit `src/` and rebuild. Never hand-edit `talk.html` or `artifact/index.html`; the build overwrites them.
 
+PDF export (one page per slide at its final build): open `talk.html#print` in headless Chrome with `--print-to-pdf`.
+
+## Films and clips
+
+The decks play pre-rendered video when it sits next to `talk.html`, and fall back to a D3 or CSS version without it. Each renderer needs `playwright-core` on `NODE_PATH` and ffmpeg; the exact commands are in each script's header.
+
+- `lecture-1/film/opening.mp4`: `film/src/scene.html` (canvas, `draw(t)`), `music.py` (numpy score), `render.js` (frame capture). To change only the sound, re-run `music.py` and remux the audio onto the existing video with ffmpeg (`-map 0:v -map 1:a -c:v copy`).
+- `*/film/close.m4a`: `film/src/close.py`.
+- `lecture-2/film/flipbook.mp4`: `film/src/flipbook.html` (WebGL corner-peel book; `TURN_FROM` picks the corner), `render_flipbook.js` (needs WebGL in headless Chrome: SwiftShader flags are in the script), `flipbook_audio.py` (paper sounds from the turn schedule).
+- `lecture-2/clips/rf-forest.mp4`: `scripts/record_explainer.js` records the live Random Forest explainer.
+
 ## Facts are frozen to the day each talk was given
 
 - Every quote on a slide is verbatim from a transcript, and every number traces to a file. Those transcripts and the provenance file (`data/sources/`, `lecture-1/data/claims.json`) are deliberately not in this repository, so the quote and number checks cannot pass here. Do not recreate those files, paraphrase quotes into new "quotes", or invent sources to make a check pass.

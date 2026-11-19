@@ -46,16 +46,6 @@ Open a lecture's `talk.html` in Chrome or Edge. It works offline; keep that lect
 | `shared/vendor/` | D3 7.9.0 and the Inter and JetBrains Mono fonts |
 | `talk.html`, `faculty/` | Redirects, so links to the earlier addresses still open the right talk |
 
-## Rebuilding after an edit
+## Not included
 
-Run the scripts from inside the lecture's folder:
-
-```bash
-cd lecture-2
-python -I ../shared/build.py                                   # writes talk.html and artifact/index.html
-python -I ../shared/shoot.py && python -I scripts/eval_deck.py  # render every slide, then run the checks
-```
-
-Lecture 1 also has `scripts/usage_stats.py`, which refreshes `data/stats.json` from local Claude Code logs.
-
-Not in this repository: the talk transcripts and notes behind the quotes (`data/sources/`) and lecture 1's provenance file for each number (`data/claims.json`). Their checks in `eval_deck.py` only run on the original copy.
+The talk transcripts and notes behind the quotes (`data/sources/`) and lecture 1's provenance file for its numbers (`data/claims.json`) stay off GitHub. Every quote and number on the slides was checked against them before each talk. Notes for coding agents (building, checking, re-rendering the films) are in [AGENTS.md](AGENTS.md).

@@ -40,48 +40,12 @@ Engagement moments are marked ★ in the notes: show of hands (slide 2), pages g
 | `src/engine.js`, `src/shell.html`, `src/deck.css` | Slide engine (keys, steps, presenter view), page skeleton, layout |
 | `../shared/theme-keynote.css` | All colours and fonts, shared with lecture 2. Copy and edit this file to re-theme a later lecture |
 | `data/stats.json` | Usage numbers, frozen to 14 Aug – 16 Oct 2026 |
-| `data/claims.json` | Every number shown on a slide, with the file it comes from |
-| `data/sources/` | Transcripts you supplied, the blog, and notes from the web pages used |
 | `data/deck_eval.json` | Latest eval result from `scripts/eval_deck.py` |
 | `clips/` | Silent clips the deck plays: `game-bot.mp4` (slide 9), `pokemon-sprou.mp4` (slide 18), `wall-e.mp4` (last slide) |
 | `film/close.m4a` | The swell under the questions slide (`film/src/close.py`) |
-
-## Rebuilding after an edit
-
-Run from this folder (`lecture-1/`):
-
-```bash
-python -I ../shared/build.py
-```
-
-Full check (takes about a minute; renders every slide headless):
-
-```bash
-python -I scripts/usage_stats.py && python -I ../shared/build.py && python -I ../shared/shoot.py && python -I scripts/eval_deck.py
-```
-
-PDF export (a static copy, one page per slide at its final build):
-
-```bash
-"C:/Program Files/Google/Chrome/Application/chrome.exe" --headless=new --disable-gpu --virtual-time-budget=8000 --no-pdf-header-footer --print-to-pdf=talk.pdf "file:///$(cygpath -m "$PWD/talk.html")#print"
-```
 
 ## Opening film
 
 Slide 1 plays `film/opening.mp4` (25 s, 1920×1080, with sound) on the first click when that file sits next to `talk.html`; without it, the same sequence runs as a silent D3 animation. The film is drawn in code: `film/src/scene.html` (canvas, `draw(t)`), `film/src/music.py` (numpy score on the same 120 bpm grid, built from computer sounds: keystrokes, beeps, a drive spinning up, a screen switching off), `film/src/render.js` (frame capture in headless Chrome).
 
-To change only the sound, keep the frames and swap the audio track:
-
-```bash
-cd film/src && python music.py music.wav && cp ../opening.mp4 frames.mp4 && ffmpeg -y -i frames.mp4 -i music.wav -map 0:v -map 1:a -c:v copy -c:a aac -b:a 192k -movflags +faststart -shortest ../opening.mp4
-python close.py close.wav && ffmpeg -y -i close.wav -c:a aac -b:a 160k ../close.m4a
-```
-
-Keep the `film/` and `clips/` folders with the deck when you copy it to the laptop. Open `film/src/scene.html` in Chrome to preview it in real time.
-
-To re-render after editing the scene or the numbers in `data/stats.json` (needs Node and `npm i playwright-core` in any folder):
-
-```bash
-cd film/src && python music.py music.wav && NODE_PATH=<that folder>/node_modules node render.js frames --fps 60
-ffmpeg -y -framerate 60 -i frames/f%05d.png -i music.wav -c:v libx264 -preset slow -crf 18 -tune animation -pix_fmt yuv420p -c:a aac -b:a 192k -movflags +faststart -shortest ../opening.mp4
-```
+Keep the `film/` and `clips/` folders with the deck when you copy it to the laptop.
