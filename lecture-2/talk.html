@@ -616,6 +616,49 @@ body[data-bare] .kaggle-hl, body.print .kaggle-hl { animation: none; transition:
   const svg = id => d3.select('#' + id);
   const clear = id => { const s = svg(id); s.interrupt(); s.selectAll('*').interrupt().remove(); return s; };
   const text = (g, x, y, t, cls, anchor) => g.append('text').attr('x', x).attr('y', y).attr('class', cls || '').attr('text-anchor', anchor || 'start').text(t);
+  /* A steel J hook drawn as a shaded wire. The wire is a centreline sampled with a radius at every point; the shading is
+     ~22 stacked outlines that shrink and slide towards the light (upper left), dark rim to bright highlight, so it wraps
+     round the bend, the point, the barb and the eye. Eye centre at the origin; tip of the point at (-190,190). */
+  function steelHook(H) {
+    const L = [-0.62, -0.78];                           // light direction
+    const mix = (a, b, t) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
+    const hex = c => '#' + c.map(v => v.toString(16).padStart(2, '0')).join('');
+    const ramp = [[30, 37, 44], [78, 88, 99], [140, 150, 161], [196, 204, 212], [246, 248, 250]];
+    const col = t => { const x = Math.min(.9999, t) * (ramp.length - 1), i = Math.floor(x); return hex(mix(ramp[i], ramp[i + 1], x - i)); };
+    const bez = (p0, p1, p2, p3, n) => d3.range(n + 1).map(i => { const t = i / n, u = 1 - t;
+      return [0, 1].map(k => u * u * u * p0[k] + 3 * u * u * t * p1[k] + 3 * u * t * t * p2[k] + t * t * t * p3[k]); });
+    const line = (a, b, n) => d3.range(n + 1).map(i => [a[0] + (b[0] - a[0]) * i / n, a[1] + (b[1] - a[1]) * i / n]);
+    // one tube: pts (centreline), rad(i) (radius per sample); closed loops repeat their first point
+    const tube = (pts, rad, closed) => {
+      const n = pts.length, nor = pts.map((p, i) => {
+        const a = pts[Math.max(0, i - 1)], b = pts[Math.min(n - 1, i + 1)], dx = b[0] - a[0], dy = b[1] - a[1], m = Math.hypot(dx, dy) || 1;
+        return [-dy / m, dx / m];
+      });
+      const N = 22;
+      d3.range(N + 1).forEach(k => {
+        const f = k / N, shrink = 1 - 0.86 * f;
+        const side = (i, s) => { const r = rad(i), nl = nor[i][0] * L[0] + nor[i][1] * L[1], o = r * 0.5 * f * nl;
+          return [pts[i][0] + nor[i][0] * (o + s * r * shrink), pts[i][1] + nor[i][1] * (o + s * r * shrink)]; };
+        const A = d3.range(n).map(i => side(i, 1)), B = d3.range(n).map(i => side(i, -1));
+        const P = a => a.map(p => p[0].toFixed(2) + ',' + p[1].toFixed(2)).join(' L');
+        const d = closed ? 'M' + P(A) + ' Z M' + P(B.reverse()) + ' Z' : 'M' + P(A) + ' L' + P(B.reverse()) + ' Z';
+        H.append('path').attr('d', d).attr('fill', col(f)).attr('fill-rule', 'evenodd')
+          .attr('stroke', k === 0 ? '#1b2128' : 'none').attr('stroke-width', k === 0 ? 1.2 : 0).attr('stroke-linejoin', 'round');
+      });
+    };
+    const R = 9;
+    // barb first, so the point covers its root: a sliver leaving the inside of the point, angled back towards the bend
+    const barb = line([-190, 236], [-153, 304], 40);
+    tube(barb, i => 7 * Math.pow(1 - i / 40, 0.8));
+    // shank, bend, point (one wire); the point tapers over its last 120 units
+    const wire = [...line([0, 14], [0, 330], 60), ...bez([0, 330], [0, 450], [-190, 450], [-190, 330], 90).slice(1), ...line([-190, 330], [-190, 190], 60).slice(1)];
+    const taper = y => (y > 310 ? 1 : Math.pow(Math.max(0, (y - 190) / 120), 0.62));
+    tube(wire, i => R * (wire[i][0] < -100 && wire[i][1] < 331 ? taper(wire[i][1]) : 1));
+    // the eye: a closed ring of wire
+    const eye = d3.range(97).map(i => [17 * Math.cos(i / 96 * 2 * Math.PI), 17 * Math.sin(i / 96 * 2 * Math.PI)]);
+    tube(eye, () => 6.5, true);
+    return H;
+  }
   const fade = (sel, on, ms, instant) => sel.transition().duration(D(ms || 500, instant)).attr('opacity', on ? 1 : 0);
   /* Arrowhead markers for one svg; returns id => url(...) for 'arr' (grey), 'ok', 'neu' or 'sys'. */
   function arrows(s, size) {
@@ -1422,7 +1465,6 @@ body[data-bare] .kaggle-hl, body.print .kaggle-hl { animation: none; transition:
       lg('st-sky', [['0%', '#020306'], ['70%', '#0c1220'], ['100%', '#1a2436']]);
       lg('st-sea', [['0%', '#0d3d58'], ['30%', '#082a40'], ['100%', '#020a12']]);
       lg('st-ray', [['0%', '#7fd8ff', .22], ['100%', '#7fd8ff', 0]]);
-      lg('st-steel', [['0%', '#e9edf2'], ['45%', '#9aa3ad'], ['100%', '#5d6670']], 1, 0);
       const blur = defs.append('filter').attr('id', 'st-blur').attr('x', '-30%').attr('y', '-30%').attr('width', '160%').attr('height', '160%');
       blur.append('feGaussianBlur').attr('stdDeviation', 18);
       const glow = defs.append('filter').attr('id', 'st-glow').attr('x', '-50%').attr('y', '-50%').attr('width', '200%').attr('height', '200%');
@@ -1465,11 +1507,7 @@ body[data-bare] .kaggle-hl, body.print .kaggle-hl { animation: none; transition:
       this.line = this.hookG.append('line').attr('stroke', '#d8e2ea').attr('stroke-width', 2.5).attr('opacity', .8);
       const H = this.hook = this.hookG.append('g');
       // a J hook: eye, shank, bend, point and barb (drawn at the origin = the eye)
-      H.append('circle').attr('cx', 0).attr('cy', 0).attr('r', 20).attr('fill', 'none').attr('stroke', 'url(#st-steel)').attr('stroke-width', 11);
-      H.append('path').attr('d', 'M0,20 L0,330 C0,450 -190,450 -190,330 L-190,250').attr('fill', 'none').attr('stroke', 'url(#st-steel)').attr('stroke-width', 18).attr('stroke-linecap', 'round');
-      H.append('path').attr('d', 'M-199,262 L-190,206 L-160,262 Z').attr('fill', '#c9d1d9');
-      H.append('path').attr('d', 'M-182,300 L-150,272').attr('stroke', '#c9d1d9').attr('stroke-width', 9).attr('stroke-linecap', 'round');
-      H.append('path').attr('d', 'M-5,40 L-5,320').attr('stroke', '#ffffff').attr('stroke-width', 3).attr('opacity', .55);
+      steelHook(H);
       // the description, on a plate bound to the shank
       const tag = this.tag = H.append('g').attr('transform', 'translate(34,96)').attr('opacity', 0);
       tag.append('path').attr('d', 'M-34,30 L0,30').attr('stroke', '#d8e2ea').attr('stroke-width', 3);
@@ -1685,15 +1723,14 @@ body[data-bare] .kaggle-hl, body.print .kaggle-hl { animation: none; transition:
 
   /* ---------- s-pdpa · a UserPromptSubmit hook catches an NRIC before it leaves the laptop ----------
      The hook is the steel J-hook from the storm slide, on a line, swaying a little. The prompt with an NRIC and a phone
-     number slides in and snags on its point; the clean prompt passes underneath to Claude. */
+     number slides in and is pierced by its point: the full hook is drawn behind the card, and a copy of the tip, cut at
+     the entry hole, in front of it. The clean prompt passes underneath to Claude. */
   C['s-pdpa'] = {
     steps: 4,
     enter() {
       stop('pii'); this.played = false; this.hooked = false; this.tugY = 0; if (this.swayT) { this.swayT.stop(); this.swayT = null; }
       const root = clear('pii-svg');
       const A = arrows(root, 9);
-      const gr = root.append('defs').append('linearGradient').attr('id', 'pii-steel').attr('x1', 0).attr('y1', 0).attr('x2', 1).attr('y2', 0);
-      [['0%', '#e9edf2'], ['45%', '#9aa3ad'], ['100%', '#5d6670']].forEach(([o, c]) => gr.append('stop').attr('offset', o).attr('stop-color', c));
       const s = root.append('g').attr('transform', 'translate(0,40)');
       // Claude
       const cl = s.append('g').attr('transform', 'translate(780,40)');
@@ -1701,6 +1738,13 @@ body[data-bare] .kaggle-hl, body.print .kaggle-hl { animation: none; transition:
       text(cl, 115, 52, 'Claude', '', 'middle').style('font', '700 32px var(--f-display)');
       this.recv1 = text(cl, 115, 140, 'receives nothing', '', 'middle').style('font', '600 27px var(--f-body)').style('fill', COL.mute).attr('opacity', 0);
       this.recv2 = text(cl, 115, 317, '✓ student A0423', '', 'middle').style('font', '600 26px var(--f-body)').style('fill', COL.ok).attr('opacity', 0);
+      // the hook on its line, behind the prompts (the point's tip is drawn again in front of the first one, below)
+      const EX = 650, EY = -7, K = 0.55;              // eye position and scale of the storm hook
+      const HOLE = 322;                               // hook-space y where the point enters the card (the tip runs to 190)
+      this.hookG = s.append('g');
+      this.hookG.append('line').attr('x1', EX).attr('x2', EX).attr('y1', -40).attr('y2', EY - 11).attr('stroke', '#d8e2ea').attr('stroke-width', 2).attr('opacity', .8);
+      steelHook(this.hookG.append('g').attr('transform', `translate(${EX},${EY}) scale(${K})`));
+      text(s, EX + 22, -12, 'UserPromptSubmit hook', '').style('font', '700 24px var(--f-mono)').style('fill', COL.sess);
       // the prompts
       const card = (y, lines, c) => {
         const g = s.append('g').attr('transform', `translate(10,${y})`).attr('opacity', 0);
@@ -1711,24 +1755,23 @@ body[data-bare] .kaggle-hl, body.print .kaggle-hl { animation: none; transition:
         });
         return g;
       };
-      this.c1 = card(40, [[['> Draft a reply to ']], [['S1234567D', 'pii'], [' (mobile ']], [['9123 4567', 'pii'], [') about the late work.']]], COL.line);
+      this.c1 = card(40, [[['> Draft a reply to '], ['S1234567D', 'pii']], [['(mobile '], ['9123 4567', 'pii'], [') about']], [['the late work.']]], COL.line);
+      // the puncture: a dark hole a little wider than the wire, with the pushed-out rim catching the light below it
+      this.hole = this.c1.append('g').attr('transform', 'translate(475.5,120)').attr('opacity', 0);
+      this.hole.append('ellipse').attr('rx', 8).attr('ry', 3.6).attr('fill', '#000');
+      this.hole.append('path').attr('d', 'M-8.5,0.5 A8.5,4.2 0 0,0 8.5,0.5').attr('fill', 'none').attr('stroke', '#5c5c66').attr('stroke-width', 1.3);
       this.err = s.append('g').attr('opacity', 0);
       text(this.err, 10, 238, 'exit 2 · blocked by the hook', '').style('font', '700 26px var(--f-mono)').style('fill', COL.bad);
       text(this.err, 10, 272, 'NRIC/FIN and phone found', '').style('font', '500 26px var(--f-mono)').style('fill', COL.bad);
       this.c2 = card(298, [[['> Draft a reply to student']], [['A0423 about the late work.']]], COL.ok);
       this.c2.select('rect').attr('height', 100);
       this.a2 = s.append('path').attr('d', 'M540,348 L770,348').attr('stroke', COL.ok).attr('stroke-width', 3).attr('marker-end', A('ok')).attr('opacity', 0);
-      // the hook on its line (drawn over the first prompt, so its point pierces the card)
-      const EX = 650, EY = 8, K = 0.55;               // eye position and scale of the storm hook
-      this.hookG = s.append('g');
-      this.hookG.append('line').attr('x1', EX).attr('x2', EX).attr('y1', -40).attr('y2', EY - 11).attr('stroke', '#d8e2ea').attr('stroke-width', 2).attr('opacity', .8);
-      const H = this.hookG.append('g').attr('transform', `translate(${EX},${EY}) scale(${K})`);
-      H.append('circle').attr('r', 20).attr('fill', 'none').attr('stroke', 'url(#pii-steel)').attr('stroke-width', 11);
-      H.append('path').attr('d', 'M0,20 L0,330 C0,450 -190,450 -190,330 L-190,250').attr('fill', 'none').attr('stroke', 'url(#pii-steel)').attr('stroke-width', 18).attr('stroke-linecap', 'round');
-      H.append('path').attr('d', 'M-199,262 L-190,206 L-160,262 Z').attr('fill', '#c9d1d9');
-      H.append('path').attr('d', 'M-182,300 L-150,272').attr('stroke', '#c9d1d9').attr('stroke-width', 9).attr('stroke-linecap', 'round');
-      H.append('path').attr('d', 'M-5,40 L-5,320').attr('stroke', '#ffffff').attr('stroke-width', 3).attr('opacity', .55);
-      text(s, EX + 22, -12, 'UserPromptSubmit hook', '').style('font', '700 24px var(--f-mono)').style('fill', COL.sess);
+      // the point goes through the first prompt: the hole, and the tip in front of the card, cut at the hole
+      const front = this.front = s.append('g');
+      const FH = front.append('g').attr('transform', `translate(${EX},${EY}) scale(${K})`);
+      const cid = 'pii-tipclip';
+      FH.append('clipPath').attr('id', cid).append('rect').attr('x', -240).attr('y', 120).attr('width', 120).attr('height', HOLE);
+      steelHook(FH.append('g').attr('clip-path', `url(#${cid})`));
       this.pivot = [EX, -40];
       this.sway(0);
       if (!reduce && !document.body.dataset.bare) {
@@ -1736,10 +1779,11 @@ body[data-bare] .kaggle-hl, body.print .kaggle-hl { animation: none; transition:
         this.swayT = d3.timer(() => this.sway(Math.sin((performance.now() - t0) / 1000 * 1.3) * 2.2 * (this.hooked ? 0.35 : 1)));
       }
     },
+    HUNG: 'translate(70,50) rotate(-2.5,475.5,120)',  // the first prompt hanging on the point, turned about the hole
     sway(deg) {
       const [px, py] = this.pivot, tr = `translate(0,${(this.tugY || 0).toFixed(1)}) rotate(${deg.toFixed(2)},${px},${py})`;
-      this.hookG.attr('transform', tr);
-      if (this.hooked) this.c1.attr('transform', tr + ' translate(40,40) rotate(-2.5,505,83)');
+      this.hookG.attr('transform', tr); this.front.attr('transform', tr);
+      if (this.hooked) this.c1.attr('transform', tr + ' ' + this.HUNG);
     },
     play(instant) {
       const now = instant || reduce || document.body.dataset.bare;
@@ -1747,16 +1791,18 @@ body[data-bare] .kaggle-hl, body.print .kaggle-hl { animation: none; transition:
       const caught = () => {
         c1.select('rect').attr('stroke', COL.bad);
         pii.style('fill', COL.bad).style('text-decoration', 'line-through');
+        this.hole.attr('opacity', 1);
       };
       if (now) {
         this.hooked = true; c1.attr('opacity', 1); this.sway(0); caught();
         this.err.attr('opacity', 1); this.recv1.attr('opacity', 1);
         this.c2.attr('opacity', 1); this.a2.attr('opacity', 1); this.recv2.attr('opacity', 1); return;
       }
-      // slides in, snags on the point, tips over a little and hangs there; the hook gives a short tug
+      // slides in onto the point, drops onto it and tips over a little, and hangs there; the hook gives a short tug
       c1.attr('transform', 'translate(-60,40)').transition().duration(500).attr('opacity', 1).attr('transform', 'translate(10,40)')
-        .transition().duration(800).ease(d3.easeCubicIn).attr('transform', 'translate(40,40)')
-        .transition().duration(260).ease(d3.easeBackOut.overshoot(2)).attr('transform', 'translate(40,40) rotate(-2.5,505,83)')
+        .transition().duration(800).ease(d3.easeCubicIn).attr('transform', 'translate(70,40)')
+        .transition().duration(260).ease(d3.easeBackOut.overshoot(2)).attr('transform', this.HUNG)
+        .on('start', () => this.hole.attr('opacity', 1))
         .on('end', () => {
           this.hooked = true;
           c1.select('rect').transition().duration(200).attr('stroke', COL.bad);
