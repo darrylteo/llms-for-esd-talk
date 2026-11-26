@@ -44,7 +44,7 @@ Open a lecture's `talk.html` in Chrome or Edge. It works offline; keep that lect
 | `shared/shoot.py` | Renders every slide in headless Chrome and records script errors and overflow |
 | `shared/theme-keynote.css` | Colours and fonts used by both decks |
 | `shared/vendor/` | D3 7.9.0 and the Inter and JetBrains Mono fonts |
-| `talk.html`, `faculty/` | Redirects, so links to the earlier addresses still open the right talk |
+| `talk.html` | Redirect, so links to lecture 1's earlier address still open it |
 
 ## Not included
 
