@@ -1,6 +1,6 @@
 // Record the live Random Forest explainer in headless Chrome, for the opening slide and the 2026 panel.
 // Usage (needs playwright-core on NODE_PATH: `npm i playwright-core` anywhere and point NODE_PATH at its node_modules):
-//   NODE_PATH=<folder>/node_modules node scripts/record_explainer.js <out_dir>
+//   NODE_PATH=<folder>/node_modules node src/scripts/record_explainer.js <out_dir>
 // Writes <out_dir>/rf.webm (whole run) and rf_marks.json (seconds at which each step began, for cutting with ffmpeg).
 // A drawn cursor glides to each button and rings on click, and tree 1's first split is chosen by hand.
 // clips/rf-forest.mp4 is three cuts of rf.webm (times from rf_marks.json): pick-0.3 .. picked+0.9 at 1.3x, crop 1586:1080:0:0

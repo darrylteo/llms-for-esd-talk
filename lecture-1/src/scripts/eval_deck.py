@@ -21,7 +21,7 @@ import sys
 from html.parser import HTMLParser
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[2]  # the lecture folder (this file is in src/scripts/)
 SHOTS = ROOT / "data" / "shots"
 WPM = 140
 SECTION_TARGET = {"A": 60, "B": 1320, "C": 420}

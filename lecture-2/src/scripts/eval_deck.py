@@ -20,7 +20,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[2]  # the lecture folder (this file is in src/scripts/)
 SRC = ROOT / "data" / "sources"
 SHOTS = ROOT / "data" / "shots"
 SLIDES = (ROOT / "src" / "slides.html").read_text(encoding="utf-8")

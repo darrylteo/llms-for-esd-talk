@@ -13,7 +13,7 @@ from pathlib import Path
 HOME = Path.home()
 PROJECTS = HOME / ".claude" / "projects"
 PLAN_USAGE = HOME / "AppData" / "Roaming" / "Claude" / "plan-usage-history.json"
-OUT = Path(__file__).resolve().parent.parent / "data" / "stats.json"
+OUT = Path(__file__).resolve().parents[2] / "data" / "stats.json"
 # Frozen window so the talk's numbers do not drift as I keep working: first log day to the day before the deck was built.
 UNTIL = "2026-10-16"
 

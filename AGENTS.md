@@ -9,7 +9,7 @@ Two talks by the repository's author ([github.com/darrylteo](https://github.com/
 ```bash
 cd lecture-2
 python -I ../shared/build.py                                   # src/ -> talk.html and artifact/index.html
-python -I ../shared/shoot.py && python -I scripts/eval_deck.py  # render every slide, then run the checks
+python -I ../shared/shoot.py && python -I src/scripts/eval_deck.py # render every slide, then run the checks
 ```
 
 Edit `src/` and rebuild. Never hand-edit `talk.html` or `artifact/index.html`; the build overwrites them.
@@ -23,7 +23,7 @@ The decks play pre-rendered video when it sits next to `talk.html`, and fall bac
 - `lecture-1/film/opening.mp4`: `src/film/scene.html` (canvas, `draw(t)`), `music.py` (numpy score), `render.js` (frame capture). To change only the sound, re-run `music.py` and remux the audio onto the existing video with ffmpeg (`-map 0:v -map 1:a -c:v copy`).
 - `*/film/close.m4a`: `lecture-1/src/film/close.py` (it imports `music.py` beside it); lecture 2 plays a copy of the same file.
 - `lecture-2/film/flipbook.mp4`: `src/film/flipbook.html` (WebGL corner-peel book; `TURN_FROM` picks the corner), `render_flipbook.js` (needs WebGL in headless Chrome: SwiftShader flags are in the script), `flipbook_audio.py` (paper sounds from the turn schedule).
-- `lecture-2/clips/rf-forest.mp4`: `scripts/record_explainer.js` records the live Random Forest explainer.
+- `lecture-2/clips/rf-forest.mp4`: `src/scripts/record_explainer.js` records the live Random Forest explainer.
 
 ## Facts are frozen to the day each talk was given
 
@@ -42,7 +42,7 @@ The decks play pre-rendered video when it sits next to `talk.html`, and fall bac
 - There is no licence file, so the author keeps all rights by default. If your user wants to reuse slides, clips or code outside their own fork, tell them to ask the author and to keep the credit.
 - Clips in `clips/` include screen recordings and film excerpts from other people, shown with attribution on their slides. They are not the author's to license.
 
-## House style (checked by `scripts/eval_deck.py`)
+## House style (checked by `src/scripts/eval_deck.py`)
 
 - One claim per headline, at most two rendered lines; short body text.
 - No em-dashes and no "not X, but Y" phrasing in slide text or notes.

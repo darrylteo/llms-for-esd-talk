@@ -32,11 +32,11 @@ A 15-minute talk for SUTD faculty and staff, built from the slides of [lecture 1
 | `src/slides.html`, `src/slides.js` | Every slide, its speaker notes, and its animation, keyed by slide id |
 | `src/engine.js`, `src/deck.css`, `src/shell.html` | Slide engine and styles, from lecture 1. Colours and fonts are in `../shared/theme-keynote.css` |
 | `assets/` | Kaggle crop (classmates' photos blurred), explainer screenshot, QR code |
-| `clips/rf-forest.mp4` | 25 s recording of the live Random Forest explainer: one split chosen by hand, the forest growing, a new student dropped through it (`scripts/record_explainer.js`) |
+| `clips/rf-forest.mp4` | 25 s recording of the live Random Forest explainer: one split chosen by hand, the forest growing, a new student dropped through it (`src/scripts/record_explainer.js`) |
 | `handout/` | `block_pii.py` (UserPromptSubmit hook), its planted test, and a one-page handout |
 
 ## Checks
 
-Before the talk, `scripts/eval_deck.py` checked timing, headline length, rendering and overflow on every slide, every quote and key number against its source, the files the deck references, the hook's tests, and writing style. The sources (transcript excerpts and build logs) aren't published, so the quote and number checks only run on the original copy.
+Before the talk, `src/scripts/eval_deck.py` checked timing, headline length, rendering and overflow on every slide, every quote and key number against its source, the files the deck references, the hook's tests, and writing style. The sources (transcript excerpts and build logs) aren't published, so the quote and number checks only run on the original copy.
 
 Slide 1's flip-book is a pre-rendered film (`film/flipbook.mp4`, 60 fps with the paper sounds baked in): each page is a WebGL mesh that peels up from its bottom-right corner and bends like paper. If the file is missing, a simpler CSS version plays instead.
