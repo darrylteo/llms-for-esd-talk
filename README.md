@@ -39,7 +39,7 @@ Open a lecture's `talk.html` in Chrome or Edge. It works offline; keep that lect
 | Path | What it is |
 |---|---|
 | `index.html` | The landing page above, served by GitHub Pages |
-| `lecture-1/`, `lecture-2/` | One folder per talk: `talk.html` (built deck), `src/` (slides, notes, animation, engine), `data/`, `clips/`, `film/`, `assets/`, and `scripts/eval_deck.py` (that talk's checks) |
+| `lecture-1/`, `lecture-2/` | One folder per talk: `talk.html` (built deck), `src/` (slides, notes, animation, engine), `data/`, `clips/`, `film/`, `src/assets/`, and `scripts/eval_deck.py` (that talk's checks) |
 | `shared/build.py` | Assembles a lecture's `src/` into `talk.html` (offline, fonts and D3 inlined) and `artifact/index.html` (CDN version) |
 | `shared/shoot.py` | Renders every slide in headless Chrome and records script errors and overflow |
 | `shared/theme-keynote.css` | Colours and fonts used by both decks |

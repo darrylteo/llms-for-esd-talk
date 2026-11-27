@@ -126,7 +126,7 @@ def main():
     add("N1", not nbad, "; ".join(nbad) or f"{len(NUMBERS)} numbers and the 2019 R code check out")
 
     refs = set(re.findall(r'(?:src|data-clip|data-src)="((?:assets|clips|film)/[^"]+)"', SLIDES)) | {"film/close.m4a", "handout/block_pii.py", "handout/README.md"}
-    missing = [r for r in sorted(refs) if not (ROOT / r).exists()]
+    missing = [r for r in sorted(refs) if not (ROOT / ("src/" + r if r.startswith("assets/") else r)).exists()]  # assets/ sit in src/, inlined at build
     add("F1", not missing, ", ".join(missing) or f"{len(refs)} files present")
 
     t = subprocess.run([sys.executable, "-I", str(ROOT / "handout" / "test_block_pii.py")], capture_output=True, text=True)

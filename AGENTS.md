@@ -34,7 +34,7 @@ The decks play pre-rendered video when it sits next to `talk.html`, and fall bac
 ## Privacy
 
 - The author's local project names and paths were removed on purpose. Do not try to reconstruct them from the history, the usage data, or anywhere else.
-- `lecture-2/assets/kaggle.jpg` has classmates' photos blurred, and only the cropped image is published. Keep it that way.
+- `lecture-2/src/assets/kaggle.jpg` has classmates' photos blurred, and only the cropped image is published. Keep it that way.
 - Lecture 2 is partly about keeping personal data (NRIC numbers, phone numbers) out of prompts. `lecture-2/handout/block_pii.py` is a working UserPromptSubmit hook for that, with tests. Don't put personal data into slides, notes or commits here.
 
 ## Reuse

@@ -68,10 +68,10 @@ def assemble(offline: bool) -> str:
     for k, v in rep.items():
         assert k in html or k in slides, k
         html = html.replace(k, v)
-    # small images (assets/) are inlined so the deck stays one file; videos stay next to it in clips/ and film/
+    # small images (src/assets/) are inlined so the deck stays one file; videos stay next to it in clips/ and film/
     mime = {".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png", ".svg": "image/svg+xml"}
     html = re.sub(r'src="(assets/[^"]+)"', lambda m: 'src="data:' + mime[Path(m.group(1)).suffix.lower()] + ';base64,' +
-                  base64.b64encode((ROOT / m.group(1)).read_bytes()).decode() + '"', html)
+                  base64.b64encode((SRC / m.group(1)).read_bytes()).decode() + '"', html)
     if offline:
         html = '<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n' + \
             html.replace("<div id=\"viewport\">", "</head>\n<body>\n<div id=\"viewport\">", 1) + "\n</body>\n</html>\n"
