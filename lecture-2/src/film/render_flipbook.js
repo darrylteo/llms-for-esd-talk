@@ -5,7 +5,7 @@
    Then, from this folder:
      python flipbook_audio.py <outDir>/schedule.json <outDir>/paper.wav
      ffmpeg -y -framerate 60 -i <outDir>/f%05d.png -i <outDir>/paper.wav -c:v libx264 -preset slow -crf 18 -tune animation
-            -pix_fmt yuv420p -c:a aac -b:a 160k -movflags +faststart -shortest ../flipbook.mp4
+            -pix_fmt yuv420p -c:a aac -b:a 160k -movflags +faststart -shortest ../../film/flipbook.mp4
    Preview the motion in Chrome afterwards with flipbook.html?preview when <outDir> is ./frames. */
 const fs = require('fs'), path = require('path');
 const { chromium } = require('playwright-core');

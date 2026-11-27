@@ -42,10 +42,10 @@ Engagement moments are marked ★ in the notes: show of hands (slide 2), pages g
 | `data/stats.json` | Usage numbers, frozen to 14 Aug – 16 Oct 2026 |
 | `data/deck_eval.json` | Latest eval result from `scripts/eval_deck.py` |
 | `clips/` | Silent clips the deck plays: `game-bot.mp4` (slide 9), `pokemon-sprou.mp4` (slide 18), `wall-e.mp4` (last slide) |
-| `film/close.m4a` | The swell under the questions slide (`film/src/close.py`) |
+| `film/close.m4a` | The swell under the questions slide (`src/film/close.py`) |
 
 ## Opening film
 
-Slide 1 plays `film/opening.mp4` (25 s, 1920×1080, with sound) on the first click when that file sits next to `talk.html`; without it, the same sequence runs as a silent D3 animation. The film is drawn in code: `film/src/scene.html` (canvas, `draw(t)`), `film/src/music.py` (numpy score on the same 120 bpm grid, built from computer sounds: keystrokes, beeps, a drive spinning up, a screen switching off), `film/src/render.js` (frame capture in headless Chrome).
+Slide 1 plays `film/opening.mp4` (25 s, 1920×1080, with sound) on the first click when that file sits next to `talk.html`; without it, the same sequence runs as a silent D3 animation. The film is drawn in code: `src/film/scene.html` (canvas, `draw(t)`), `src/film/music.py` (numpy score on the same 120 bpm grid, built from computer sounds: keystrokes, beeps, a drive spinning up, a screen switching off), `src/film/render.js` (frame capture in headless Chrome).
 
 Keep the `film/` and `clips/` folders with the deck when you copy it to the laptop.
