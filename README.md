@@ -40,4 +40,4 @@ The talk transcripts and notes behind the quotes (`src/data/sources/`) and lectu
 
 ## Where things are
 
-Each lecture folder holds what you need to present it: `talk.html`, the videos it plays in `clips/` and `film/`, and a README. Everything that builds the deck is in that lecture's `src/`, and the build and render scripts are in `shared/`. Notes for coding agents (building, checking, re-rendering the films) are in [AGENTS.md](AGENTS.md).
+Each lecture folder holds what you need to present it: `talk.html`, the videos it plays in `clips/` and `film/`, and a README. Everything that builds the deck is in that lecture's `src/`, and the build and render scripts are in `shared/`. Notes for coding agents (building and checking) are in [AGENTS.md](AGENTS.md), with the folder layout and film renderers in [docs/reference.md](docs/reference.md).
