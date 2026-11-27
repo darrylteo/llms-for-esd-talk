@@ -4,5 +4,8 @@ __pycache__/
 # Not for publication: other speakers' transcripts, and provenance paths on the author's computer.
 lecture-*/data/sources/
 lecture-*/data/claims.json
+lecture-*/src/data/sources/
+lecture-*/src/data/claims.json
 # Render output (rebuilt by shared/shoot.py)
 lecture-*/data/shots/
+lecture-*/src/data/shots/
