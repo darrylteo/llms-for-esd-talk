@@ -1,7 +1,7 @@
 """Render slides with headless Chrome: shoot.py [slide ...] [--step N] [--size 1920x1080] [--out dir] [--deck dir]
 
 Run from inside a lecture folder (cd lecture-1 && python -I ../shared/shoot.py), or pass --deck.
-Default: every slide at its final step. Writes PNGs to <lecture>/data/shots/.
+Default: every slide at its final step. Writes PNGs to <lecture>/src/data/shots/.
 Also dumps the DOM per slide to collect script errors recorded by the engine (data-errors on <body>).
 """
 import argparse
@@ -67,7 +67,7 @@ def main():
     ap.add_argument("slides", nargs="*", type=int)
     ap.add_argument("--step", type=int, default=99)
     ap.add_argument("--size", default="1920x1080")
-    ap.add_argument("--out", default=str(ROOT / "data" / "shots"))
+    ap.add_argument("--out", default=str(ROOT / "src" / "data" / "shots"))
     ap.add_argument("--deck", help="lecture folder (default: the current folder)")
     a = ap.parse_args()
     sys.stdout.reconfigure(encoding="utf-8")

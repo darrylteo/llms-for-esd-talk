@@ -2,14 +2,14 @@
 
   T1 section timing within ±10% of plan: teaching 8 min (A+B, including a 4-min live demo), how LLMs work 2 min (C), practice 5 min (D)
   T2 total within 15 min ± 30 s
-  A1 every headline renders in at most 2 lines (headless Chrome, data/shots)
+  A1 every headline renders in at most 2 lines (headless Chrome, src/data/shots)
   R1 no script errors, nothing outside the stage, no clipped boxes (headless Chrome)
   Q1 every quote on a slide is found in its source file (verbatim, or ≥ 0.85 similar for auto-captions)
   N1 every key number on a slide is found in its source file
   F1 every asset, clip and handout file the deck references exists
   H1 the PII hook passes its planted tests
   W1 no em-dashes and no "not X, but Y" in slide text or notes
-Writes data/deck_eval.json and prints a table.
+Writes src/data/deck_eval.json and prints a table.
 """
 import difflib
 import html
@@ -21,8 +21,9 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]  # the lecture folder (this file is in src/scripts/)
-SRC = ROOT / "data" / "sources"
-SHOTS = ROOT / "data" / "shots"
+DATA = ROOT / "src" / "data"
+SRC = DATA / "sources"
+SHOTS = DATA / "shots"
 SLIDES = (ROOT / "src" / "slides.html").read_text(encoding="utf-8")
 JS = (ROOT / "src" / "slides.js").read_text(encoding="utf-8")
 PLAN = {"AB": 480, "C": 120, "D": 300}
@@ -114,7 +115,7 @@ def main():
         if norm(num) not in shown:
             nbad.append(f"{num}: not on a slide"); continue
         if special == "kaggle":
-            continue  # read off the leaderboard screenshot (data/sources/kaggle-screenshot-raw.png)
+            continue  # read off the leaderboard screenshot (src/data/sources/kaggle-screenshot-raw.png)
         if norm(phrase) not in norm((SRC / fn).read_text(encoding="utf-8")):
             nbad.append(f"{num}: '{phrase}' not in {fn}")
     if KAGGLE_R.exists():
@@ -143,7 +144,7 @@ def main():
         print(f"{r['id']:3} {'PASS' if r['pass'] else 'FAIL'}  {r['detail']}")
     n = sum(r["pass"] for r in res)
     print(f"{n}/{len(res)} pass")
-    (ROOT / "data" / "deck_eval.json").write_text(json.dumps(res, indent=1, ensure_ascii=False), encoding="utf-8")
+    (DATA / "deck_eval.json").write_text(json.dumps(res, indent=1, ensure_ascii=False), encoding="utf-8")
     sys.exit(0 if n == len(res) else 1)
 
 

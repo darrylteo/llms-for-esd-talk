@@ -34,7 +34,7 @@ def read(p):
 
 
 def stats_json():
-    s = json.loads((ROOT / "data" / "stats.json").read_text(encoding="utf-8"))
+    s = json.loads((SRC / "data" / "stats.json").read_text(encoding="utf-8"))
     s = {k: s[k] for k in STATS_KEYS if k in s}
     s["totals"] = {"all": s["totals"]["all"]}
     return json.dumps(s, separators=(",", ":"))

@@ -27,8 +27,8 @@ The decks play pre-rendered video when it sits next to `talk.html`, and fall bac
 
 ## Facts are frozen to the day each talk was given
 
-- Every quote on a slide is verbatim from a transcript, and every number traces to a file. Those transcripts and the provenance file (`data/sources/`, `lecture-1/data/claims.json`) are deliberately not in this repository, so the quote and number checks cannot pass here. Do not recreate those files, paraphrase quotes into new "quotes", or invent sources to make a check pass.
-- `data/stats.json` is frozen usage data from the author's own Claude Code logs. Do not regenerate it with `usage_stats.py`; that would replace the author's numbers with your user's.
+- Every quote on a slide is verbatim from a transcript, and every number traces to a file. Those transcripts and the provenance file (`src/data/sources/`, `lecture-1/src/data/claims.json`) are deliberately not in this repository, so the quote and number checks cannot pass here. Do not recreate those files, paraphrase quotes into new "quotes", or invent sources to make a check pass.
+- `src/data/stats.json` is frozen usage data from the author's own Claude Code logs. Do not regenerate it with `usage_stats.py`; that would replace the author's numbers with your user's.
 - If a number looks out of date, it probably is: it was true on the day of the talk. Change it only if your user has their own source for the new value, and then update the slide's source line too.
 
 ## Privacy

@@ -5,13 +5,13 @@ Checks (each PASS/FAIL, with details):
   T2 every slide's spoken time within ±30% of its target
   A1 every headline is one sentence-like claim, at most 2 rendered lines
   A2 body text on a slide at most BODY_MAX words (headline, captions, quotes and charts excluded)
-  N1 every number shown on a slide is in data/claims.json
+  N1 every number shown on a slide is in src/data/claims.json
   N2 every claims.json entry verifies against its source file or stats.json
   Q1 every attributed quote is found in its source transcript near the cited timestamp
   R1 no script errors, nothing outside the stage, no clipped boxes (headless Chrome)
   C1 text colours reach 4.5:1 contrast on the stage background
   W1 writing style: no em-dashes, no colon headlines, no "not X, but Y"
-Writes data/deck_eval.json and prints a table.
+Writes src/data/deck_eval.json and prints a table.
 """
 import difflib
 import html
@@ -22,7 +22,8 @@ from html.parser import HTMLParser
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]  # the lecture folder (this file is in src/scripts/)
-SHOTS = ROOT / "data" / "shots"
+DATA = ROOT / "src" / "data"
+SHOTS = DATA / "shots"
 WPM = 140
 SECTION_TARGET = {"A": 60, "B": 1320, "C": 420}
 BODY_MAX = 40
@@ -157,8 +158,8 @@ def load_transcript(path):
 
 
 SOURCES = {
-    "Lee": ROOT / "data/sources/lee_robinson_cs146s.txt", "Robinson": ROOT / "data/sources/lee_robinson_cs146s.txt",
-    "Lauren": ROOT / "data/sources/lauren_tan_matt_pocock.txt", "Kun": ROOT / "data/sources/kun_chen_high_throughput.txt",
+    "Lee": DATA / "sources/lee_robinson_cs146s.txt", "Robinson": DATA / "sources/lee_robinson_cs146s.txt",
+    "Lauren": DATA / "sources/lauren_tan_matt_pocock.txt", "Kun": DATA / "sources/kun_chen_high_throughput.txt",
 }
 
 
@@ -207,7 +208,7 @@ def verify_claim(c, stats):
         shown = eval(c["fmt"], {}, {"v": v, "s": stats}) if "fmt" in c else str(v)  # fmt is a trusted local expression
         return shown == c["value"], f"stats {c['stats']} -> {shown}"
     if "file" in c:
-        p = Path(c["file"]) if Path(c["file"]).is_absolute() else ROOT / c["file"]
+        p = Path(c["file"]) if Path(c["file"]).is_absolute() else ROOT / "src" / c["file"]  # relative entries start with data/
         if not p.exists():
             return False, f"missing file {p}"
         t = p.read_text(encoding="utf-8", errors="replace")
@@ -228,8 +229,8 @@ def main():
     results = {}
     secs = src_sections()
     n_slides = len(secs)
-    stats = json.loads((ROOT / "data/stats.json").read_text(encoding="utf-8"))
-    claims = json.loads((ROOT / "data/claims.json").read_text(encoding="utf-8"))
+    stats = json.loads((DATA / "stats.json").read_text(encoding="utf-8"))
+    claims = json.loads((DATA / "claims.json").read_text(encoding="utf-8"))
     for c in claims:  # stats-derived numbers are whatever the frozen stats.json formats to
         if "stats" in c:
             c["value"] = eval(c["fmt"], {}, {"v": get_path(stats, c["stats"]), "s": stats})
@@ -324,7 +325,7 @@ def main():
     summary = (f"deck eval {passed}/{total} checks pass · {len(claims)} numbers traced to source · "
                f"{sum(1 for s in secs)} slides rendered headless · spoken {sum(sec_time.values()) / 60:.1f} min")
     print(summary)
-    (ROOT / "data/deck_eval.json").write_text(json.dumps(
+    (DATA / "deck_eval.json").write_text(json.dumps(
         {"summary": summary, "passed": passed, "total": total,
          "results": {k: {"pass": ok, "details": det} for k, (ok, det) in results.items()}}, indent=1, ensure_ascii=False), encoding="utf-8")
     return 0 if passed == total else 1

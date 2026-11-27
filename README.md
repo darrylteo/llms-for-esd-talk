@@ -48,4 +48,4 @@ Open a lecture's `talk.html` in Chrome or Edge. It works offline; keep that lect
 
 ## Not included
 
-The talk transcripts and notes behind the quotes (`data/sources/`) and lecture 1's provenance file for its numbers (`data/claims.json`) stay off GitHub. Every quote and number on the slides was checked against them before each talk. Notes for coding agents (building, checking, re-rendering the films) are in [AGENTS.md](AGENTS.md).
+The talk transcripts and notes behind the quotes (`src/data/sources/`) and lecture 1's provenance file for its numbers (`src/data/claims.json`) stay off GitHub. Every quote and number on the slides was checked against them before each talk. Notes for coding agents (building, checking, re-rendering the films) are in [AGENTS.md](AGENTS.md).

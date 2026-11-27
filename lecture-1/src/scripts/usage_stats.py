@@ -1,7 +1,7 @@
 """Deterministic Claude Code usage stats and cost receipt for the talk.
 
 Reads ~/.claude/projects/**/*.jsonl and AppData/Roaming/Claude/plan-usage-history.json,
-writes lecture-1/data/stats.json. Prices: platform.claude.com/docs/en/about-claude/pricing
+writes lecture-1/src/data/stats.json. Prices: platform.claude.com/docs/en/about-claude/pricing
 (retrieved 2026-10-17), USD per million tokens.
 """
 import json
@@ -13,7 +13,7 @@ from pathlib import Path
 HOME = Path.home()
 PROJECTS = HOME / ".claude" / "projects"
 PLAN_USAGE = HOME / "AppData" / "Roaming" / "Claude" / "plan-usage-history.json"
-OUT = Path(__file__).resolve().parents[2] / "data" / "stats.json"
+OUT = Path(__file__).resolve().parents[1] / "data" / "stats.json"
 # Frozen window so the talk's numbers do not drift as I keep working: first log day to the day before the deck was built.
 UNTIL = "2026-10-16"
 

@@ -15,7 +15,7 @@ const fps = +(opt('--fps') || 60);
 const at = opt('--at');
 
 (async () => {
-  const stats = JSON.parse(fs.readFileSync(path.join(__dirname, '../../data/stats.json'), 'utf8')).totals.all;
+  const stats = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/stats.json'), 'utf8')).totals.all;
   fs.mkdirSync(out, { recursive: true });
   const browser = await chromium.launchPersistentContext(PROFILE, { executablePath: CHROME, headless: true,
     args: ['--hide-scrollbars', '--allow-file-access-from-files', '--disable-default-apps'],
