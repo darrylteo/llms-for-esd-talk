@@ -8,11 +8,11 @@ Two talks by the repository's author ([github.com/darrylteo](https://github.com/
 
 ```bash
 cd lecture-2
-python -I ../shared/build.py                                   # src/ -> talk.html and artifact/index.html
+python -I ../shared/build.py                                   # src/ -> talk.html
 python -I ../shared/shoot.py && python -I src/scripts/eval_deck.py # render every slide, then run the checks
 ```
 
-Edit `src/` and rebuild. Never hand-edit `talk.html` or `artifact/index.html`; the build overwrites them.
+Edit `src/` and rebuild. Never hand-edit `talk.html`; the build overwrites it.
 
 PDF export (one page per slide at its final build): open `talk.html#print` in headless Chrome with `--print-to-pdf`.
 

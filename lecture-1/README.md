@@ -34,7 +34,6 @@ Engagement moments are marked ★ in the notes: show of hands (slide 2), pages g
 | Path | What it is |
 |---|---|
 | `talk.html` | The deck to present (offline, ~1 MB) |
-| `artifact/index.html` | Written by `../shared/build.py`: version for the claude.ai Artifact link (loads D3 and fonts from CDNs) |
 | `src/slides.html` | Every slide's markup and speaker notes, in order |
 | `src/slides.js` | Every slide's animation, in slide order, keyed by slide id (`C['s-hook']` animates `<section id="s-hook">`) |
 | `src/engine.js`, `src/shell.html`, `src/deck.css` | Slide engine (keys, steps, presenter view), page skeleton, layout |

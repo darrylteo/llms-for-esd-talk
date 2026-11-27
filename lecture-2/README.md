@@ -28,7 +28,6 @@ A 15-minute talk for SUTD faculty and staff, built from the slides of [lecture 1
 | Path | What it is |
 |---|---|
 | `talk.html` | The deck to present (built, offline) |
-| `artifact/index.html` | The same deck for a claude.ai Artifact link (CDN fonts and D3) |
 | `src/slides.html`, `src/slides.js` | Every slide, its speaker notes, and its animation, keyed by slide id |
 | `src/engine.js`, `src/deck.css`, `src/shell.html` | Slide engine and styles, from lecture 1. Colours and fonts are in `../shared/theme-keynote.css` |
 | `src/assets/` | Kaggle crop (classmates' photos blurred), explainer screenshot, QR code |

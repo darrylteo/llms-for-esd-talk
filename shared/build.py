@@ -1,8 +1,6 @@
 """Assemble a lecture deck. Run from inside a lecture folder:  cd lecture-1 && python -I ../shared/build.py
 
-talk.html          offline, self-contained (D3 + fonts inlined): present this one from the laptop.
-artifact/index.html  for publishing as a claude.ai Artifact: no doctype (the host adds it),
-                     D3 from cdnjs, fonts from Google Fonts.
+Writes talk.html: offline and self-contained (D3, fonts and small images inlined). GitHub Pages serves the same file.
 """
 import base64
 import json
@@ -40,7 +38,7 @@ def stats_json():
     return json.dumps(s, separators=(",", ":"))
 
 
-def assemble(offline: bool) -> str:
+def assemble() -> str:
     html = read("shell.html")
     slides = read("slides.html")
     rep = {
@@ -51,20 +49,14 @@ def assemble(offline: bool) -> str:
         "/*ENGINEJS*/": read("engine.js"),
         "/*STATS*/": stats_json(),
     }
-    if offline:
-        css = (SHARED / "vendor" / "fonts-local.css").read_text(encoding="utf-8")
+    css = (SHARED / "vendor" / "fonts-local.css").read_text(encoding="utf-8")
 
-        def embed(m):
-            data = (SHARED / m.group(1)).read_bytes()
-            return "url(data:font/woff2;base64," + base64.b64encode(data).decode() + ")"
-        css = re.sub(r"url\((vendor/[^)]+)\)", embed, css)
-        rep["<!--FONTS-->"] = "<style>\n" + css + "\n</style>"
-        rep["<!--D3-->"] = "<script>\n" + (SHARED / "vendor" / "d3.v7.9.0.min.js").read_text(encoding="utf-8") + "\n</script>"
-    else:
-        rep["<!--FONTS-->"] = ('<link rel="preconnect" href="https://fonts.googleapis.com">\n'
-                               '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400..800'
-                               '&family=JetBrains+Mono:wght@400;600&display=swap">')
-        rep["<!--D3-->"] = '<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>'
+    def embed(m):
+        data = (SHARED / m.group(1)).read_bytes()
+        return "url(data:font/woff2;base64," + base64.b64encode(data).decode() + ")"
+    css = re.sub(r"url\((vendor/[^)]+)\)", embed, css)
+    rep["<!--FONTS-->"] = "<style>\n" + css + "\n</style>"
+    rep["<!--D3-->"] = "<script>\n" + (SHARED / "vendor" / "d3.v7.9.0.min.js").read_text(encoding="utf-8") + "\n</script>"
     for k, v in rep.items():
         assert k in html or k in slides, k
         html = html.replace(k, v)
@@ -72,18 +64,14 @@ def assemble(offline: bool) -> str:
     mime = {".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png", ".svg": "image/svg+xml"}
     html = re.sub(r'src="(assets/[^"]+)"', lambda m: 'src="data:' + mime[Path(m.group(1)).suffix.lower()] + ';base64,' +
                   base64.b64encode((SRC / m.group(1)).read_bytes()).decode() + '"', html)
-    if offline:
-        html = '<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n' + \
-            html.replace("<div id=\"viewport\">", "</head>\n<body>\n<div id=\"viewport\">", 1) + "\n</body>\n</html>\n"
+    html = '<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n' + \
+        html.replace("<div id=\"viewport\">", "</head>\n<body>\n<div id=\"viewport\">", 1) + "\n</body>\n</html>\n"
     return html
 
 
 def main():
-    (ROOT / "talk.html").write_text(assemble(True), encoding="utf-8")
-    (ROOT / "artifact").mkdir(exist_ok=True)
-    (ROOT / "artifact" / "index.html").write_text(assemble(False), encoding="utf-8")
-    print("built talk.html", (ROOT / "talk.html").stat().st_size // 1024, "KB; artifact/index.html",
-          (ROOT / "artifact" / "index.html").stat().st_size // 1024, "KB")
+    (ROOT / "talk.html").write_text(assemble(), encoding="utf-8")
+    print("built talk.html", (ROOT / "talk.html").stat().st_size // 1024, "KB")
 
 
 if __name__ == "__main__":
