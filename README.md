@@ -8,7 +8,7 @@ Talks on large language models and coding agents that I gave at the Singapore Un
 
 **[Open lecture 1](https://darrylteo.github.io/llms-for-esd-talk/lecture-1/talk.html)** · 30 minutes · engineering students · Fall 2026 · [lecture-1/](lecture-1/)
 
-[![Lecture 1, slide 2: a trust curve rising from "LLM output is trash" to daily use, next to 100 agents running on their own](lecture-1/docs/preview.png)](https://darrylteo.github.io/llms-for-esd-talk/lecture-1/talk.html)
+[![Lecture 1, slide 2: a trust curve rising from "LLM output is trash" to daily use, next to 100 agents running on their own](lecture-1/preview.png)](https://darrylteo.github.io/llms-for-esd-talk/lecture-1/talk.html)
 
 How coding agents are built (the harness), what goes into their context, and how to evaluate their output, with examples from my own research. 1 min hook, 22 min technical (harness, context, evals), 7 min applications. How to present it: [lecture-1/README.md](lecture-1/README.md).
 
@@ -16,7 +16,7 @@ How coding agents are built (the harness), what goes into their context, and how
 
 **[Open lecture 2](https://darrylteo.github.io/llms-for-esd-talk/lecture-2/talk.html)** · 15 minutes · faculty and staff · November 2026 · [lecture-2/](lecture-2/)
 
-[![Lecture 2, slide 8: below the storm, a hook sways in calm water with the three hook events beside it](lecture-2/docs/preview.png)](https://darrylteo.github.io/llms-for-esd-talk/lecture-2/talk.html)
+[![Lecture 2, slide 8: below the storm, a hook sways in calm water with the three hook events beside it](lecture-2/preview.png)](https://darrylteo.github.io/llms-for-esd-talk/lecture-2/talk.html)
 
 A shorter talk for faculty and staff, built from lecture 1's slides. It covers how teaching machine learning changed between 2019 and now, with a live demo of [ML Explainers](https://ml-explainers.sutdpm.workers.dev), how agents work, and three habits: checks, hooks, and keeping personal data (PDPA) out of the prompt. The hook from the PDPA slide, with its tests, is in [lecture-2/handout/](lecture-2/handout/). How to present it: [lecture-2/README.md](lecture-2/README.md).
 

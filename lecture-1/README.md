@@ -2,7 +2,7 @@
 
 ### ▶ [Open the talk in your browser](https://darrylteo.github.io/llms-for-esd-talk/lecture-1/talk.html)
 
-[![Slide 2 of the talk: a trust curve rising from "LLM output is trash" to daily use, next to 100 agents running on their own](docs/preview.png)](https://darrylteo.github.io/llms-for-esd-talk/lecture-1/talk.html)
+[![Slide 2 of the talk: a trust curve rising from "LLM output is trash" to daily use, next to 100 agents running on their own](preview.png)](https://darrylteo.github.io/llms-for-esd-talk/lecture-1/talk.html)
 
 Press → or Space to advance, F for fullscreen and P for the presenter view.
 

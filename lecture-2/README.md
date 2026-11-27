@@ -2,7 +2,7 @@
 
 ### ▶ [Open the talk in your browser](https://darrylteo.github.io/llms-for-esd-talk/lecture-2/talk.html)
 
-[![Slide 8: below the storm, a hook sways in calm water with the three hook events beside it](docs/preview.png)](https://darrylteo.github.io/llms-for-esd-talk/lecture-2/talk.html)
+[![Slide 8: below the storm, a hook sways in calm water with the three hook events beside it](preview.png)](https://darrylteo.github.io/llms-for-esd-talk/lecture-2/talk.html)
 
 Press → or Space to advance, F for fullscreen and P for the presenter view.
 
