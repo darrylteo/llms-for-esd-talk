@@ -34,18 +34,10 @@ Open a lecture's `talk.html` in Chrome or Edge. It works offline; keep that lect
 | number + Enter | Jump to a slide |
 | G, or the mouse at the bottom edge | Slide picker (**Esc** hides it) |
 
-## Repository layout
-
-| Path | What it is |
-|---|---|
-| `index.html` | The landing page above, served by GitHub Pages |
-| `lecture-1/`, `lecture-2/` | One folder per talk: `talk.html` (built deck), `src/` (slides, notes, animation, engine), `data/`, `clips/`, `film/`, `src/assets/`, and `scripts/eval_deck.py` (that talk's checks) |
-| `shared/build.py` | Assembles a lecture's `src/` into `talk.html` (offline, fonts and D3 inlined) |
-| `shared/shoot.py` | Renders every slide in headless Chrome and records script errors and overflow |
-| `shared/theme-keynote.css` | Colours and fonts used by both decks |
-| `shared/vendor/` | D3 7.9.0 and the Inter and JetBrains Mono fonts |
-| `talk.html` | Redirect, so links to lecture 1's earlier address still open it |
-
 ## Not included
 
-The talk transcripts and notes behind the quotes (`src/data/sources/`) and lecture 1's provenance file for its numbers (`src/data/claims.json`) stay off GitHub. Every quote and number on the slides was checked against them before each talk. Notes for coding agents (building, checking, re-rendering the films) are in [AGENTS.md](AGENTS.md).
+The talk transcripts and notes behind the quotes (`src/data/sources/`) and lecture 1's provenance file for its numbers (`src/data/claims.json`) stay off GitHub. Every quote and number on the slides was checked against them before each talk.
+
+## Where things are
+
+Each lecture folder holds what you need to present it: `talk.html`, the videos it plays in `clips/` and `film/`, and a README. Everything that builds the deck is in that lecture's `src/`, and the build and render scripts are in `shared/`. Notes for coding agents (building, checking, re-rendering the films) are in [AGENTS.md](AGENTS.md).

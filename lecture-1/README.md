@@ -29,22 +29,6 @@ The last slide starts black too. One click plays the WALL-E clip (silent, 17 s);
 
 Engagement moments are marked ★ in the notes: show of hands (slide 2), pages guess (6), guess the bill (17), the debate vote (19), spot the bad eval (21).
 
-## Files
+## Copying it to the laptop
 
-| Path | What it is |
-|---|---|
-| `talk.html` | The deck to present (offline, ~1 MB) |
-| `src/slides.html` | Every slide's markup and speaker notes, in order |
-| `src/slides.js` | Every slide's animation, in slide order, keyed by slide id (`C['s-hook']` animates `<section id="s-hook">`) |
-| `src/engine.js`, `src/shell.html`, `src/deck.css` | Slide engine (keys, steps, presenter view), page skeleton, layout |
-| `../shared/theme-keynote.css` | All colours and fonts, shared with lecture 2. Copy and edit this file to re-theme a later lecture |
-| `src/data/stats.json` | Usage numbers, frozen to 14 Aug – 16 Oct 2026 |
-| `src/data/deck_eval.json` | Latest eval result from `src/scripts/eval_deck.py` |
-| `clips/` | Silent clips the deck plays: `game-bot.mp4` (slide 9), `pokemon-sprou.mp4` (slide 18), `wall-e.mp4` (last slide) |
-| `film/close.m4a` | The swell under the questions slide (`src/film/close.py`) |
-
-## Opening film
-
-Slide 1 plays `film/opening.mp4` (25 s, 1920×1080, with sound) on the first click when that file sits next to `talk.html`; without it, the same sequence runs as a silent D3 animation. The film is drawn in code: `src/film/scene.html` (canvas, `draw(t)`), `src/film/music.py` (numpy score on the same 120 bpm grid, built from computer sounds: keystrokes, beeps, a drive spinning up, a screen switching off), `src/film/render.js` (frame capture in headless Chrome).
-
-Keep the `film/` and `clips/` folders with the deck when you copy it to the laptop.
+Copy `talk.html` with its `film/` and `clips/` folders beside it. Without `film/opening.mp4`, slide 1 plays a silent animation of the same opening instead.
