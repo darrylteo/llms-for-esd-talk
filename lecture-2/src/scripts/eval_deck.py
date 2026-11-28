@@ -87,8 +87,12 @@ def main():
     total = sum(tot.values())
     add("T2", abs(total - 900) <= 30, f"total {total // 60}:{total % 60:02d}")
 
-    lines, errs = [], []
-    for f in sorted(SHOTS.glob("s*.dom.html")):
+    # One render per source section, as in lecture 1's eval. Globbing shots/ also counted stale renders of removed slides.
+    lines, errs, unrendered = [], [], []
+    for i in range(1, len(secs) + 1):
+        f = SHOTS / f"s{i:02d}.dom.html"
+        if not f.exists():
+            unrendered.append(f"s{i:02d}"); continue
         d = f.read_text(encoding="utf-8")
         m = re.search(r'data-lines="(\d+)"', d)
         if m and int(m.group(1)) > 2:
@@ -96,9 +100,11 @@ def main():
         e = re.search(r'data-errors="([^"]*)"', d); o = re.search(r'data-overflow="([^"]*)"', d)
         if (e and e.group(1)) or (o and o.group(1)):
             errs.append(f"{f.stem}: {(e.group(1) if e else '')} {(o.group(1)[:200] if o else '')}")
-    nshots = len(list(SHOTS.glob("s*.dom.html")))
-    add("A1", nshots and not lines, "; ".join(lines) or f"{nshots} slides checked")
-    add("R1", nshots and not errs, "; ".join(errs) or f"{nshots} slides clean")
+    if unrendered:
+        errs.append("not rendered: " + ", ".join(unrendered))
+    nshots = len(secs) - len(unrendered)
+    add("A1", secs and not unrendered and not lines, "; ".join(lines) or f"{nshots}/{len(secs)} slides checked")
+    add("R1", secs and not errs, "; ".join(errs) or f"{nshots}/{len(secs)} slides clean")
 
     shown = visible(SLIDES) + " " + norm(JS)
     qbad = []
